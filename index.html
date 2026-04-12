@@ -6,61 +6,45 @@
     <title>Converter App</title>
     <style>
         body { 
-            font-family: sans-serif; 
-            display: flex; 
-            flex-direction: column; 
-            min-height: 100vh; 
-            margin: 0; 
-            padding: 20px;
-            box-sizing: border-box;
-            background-color: #BDDDFC;
-            align-items: center;
-            text-align: center;
+            font-family: sans-serif; display: flex; flex-direction: column; min-height: 100vh; 
+            margin: 0; padding: 20px; box-sizing: border-box; background-color: #BDDDFC;
+            align-items: center; text-align: center;
         }
         .content { flex: 1; width: 100%; max-width: 300px; }
-        input { 
-            padding: 12px; 
-            margin: 8px 0; 
-            width: 100%; 
-            font-size: 16px; 
-            box-sizing: border-box;
-            border: 1px solid black; 
-            border-radius: 4px;
-        }
-        button {
-            padding: 12px;
-            margin: 8px 0;
-            width: 100%;
-            font-size: 16px;
-            box-sizing: border-box;
-            background-color: #384959;
-            color: #BDDDFC;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-        .clear-btn { 
-            background-color: #cc0000; 
-            color: white; 
-            font-weight: bold; 
-            max-width: 300px;
-        }
-        #clock { 
-            font-size: 1.2em; 
-            font-weight: bold; 
-            margin: 15px 0; 
-            color: #333; 
-        }
+        
+        /* Tab Styles */
+        .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; background-color: #384959; color: #BDDDFC; padding: 10px; border: none; border-radius: 5px; cursor: pointer; }
+        .tab-content { display: none; }
+        .active { display: block; }
+
+        input { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border: 1px solid black; border-radius: 4px; box-sizing: border-box; }
+        button { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; background-color: #384959; color: #BDDDFC; border: none; border-radius: 5px; font-weight: bold; }
+        .clear-btn { background-color: #cc0000; color: white; font-weight: bold; margin-top: 20px; }
+        #clock { font-size: 1.2em; font-weight: bold; margin: 15px 0; color: #333; }
     </style>
 </head>
-<body onload="clearAll(); updateClock(); setInterval(updateClock, 60000);">
+<body onload="showTab('london'); updateClock(); setInterval(updateClock, 60000);">
 
     <div class="content">
-        <h2>Currency</h2>
-        <input type="number" id="amount" placeholder="Enter Amount">
-        <button onclick="convert('USD')">USD to GBP</button>
-        <button onclick="convert('GBP')">GBP to USD</button>
-        <h3 id="moneyResult">Result: -</h3>
+        <div class="tab-buttons">
+            <button class="tab-btn" onclick="showTab('london')">London</button>
+            <button class="tab-btn" onclick="showTab('greece')">Greece</button>
+        </div>
+
+        <div id="london" class="tab-content">
+            <h2>GBP Converter</h2>
+            <input type="number" id="amt_london" placeholder="Amount (USD)">
+            <button onclick="convert('london')">Convert</button>
+            <h3 id="res_london">Result: -</h3>
+        </div>
+
+        <div id="greece" class="tab-content">
+            <h2>EUR Converter</h2>
+            <input type="number" id="amt_greece" placeholder="Amount (USD)">
+            <button onclick="convert('greece')">Convert</button>
+            <h3 id="res_greece">Result: -</h3>
+        </div>
 
         <hr>
 
@@ -76,43 +60,31 @@
     <button class="clear-btn" onclick="clearAll()">Clear All</button>
 
     <script>
-        function convert(dir) {
-            let val = document.getElementById('amount').value;
-            let res = document.getElementById('moneyResult');
-            const rate = 0.79;
-            if (val === "") return;
-            if (dir === 'USD') {
-                res.innerText = "Result: £" + (val * rate).toFixed(2);
-            } else {
-                res.innerText = "Result: $" + (val / rate).toFixed(2);
-            }
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.getElementById(tabId).style.display = 'block';
+        }
+
+        function convert(country) {
+            let val = document.getElementById('amt_' + country).value;
+            let res = document.getElementById('res_' + country);
+            const rate = (country === 'london') ? 0.79 : 0.92; // GBP vs EUR rates
+            res.innerText = "Result: " + (val * rate).toFixed(2);
         }
 
         function convertTemp(dir) {
             let val = parseFloat(document.getElementById('temp').value);
             let res = document.getElementById('tempResult');
-            if (isNaN(val)) return;
-            if (dir === 'F') {
-                res.innerText = "Result: " + ((val - 32) * 5/9).toFixed(1) + "°C";
-            } else {
-                res.innerText = "Result: " + (val * 9/5 + 32).toFixed(1) + "°F";
-            }
+            res.innerText = (dir === 'F') ? ((val - 32) * 5/9).toFixed(1) + "°C" : (val * 9/5 + 32).toFixed(1) + "°F";
         }
 
         function clearAll() {
-            document.getElementById('amount').value = "";
-            document.getElementById('temp').value = "";
-            document.getElementById('moneyResult').innerText = "Result: -";
-            document.getElementById('tempResult').innerText = "Result: -";
+            document.querySelectorAll('input').forEach(i => i.value = "");
+            document.querySelectorAll('h3').forEach(h => h.innerText = "Result: -");
         }
 
         function updateClock() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString("en-US", {
-                timeZone: "America/New_York",
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+            const timeString = new Date().toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: '2-digit', minute: '2-digit' });
             document.getElementById('clock').innerText = "EST Time: " + timeString;
         }
     </script>
