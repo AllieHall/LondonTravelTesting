@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Converter App</title>
     <style>
-        /* Force body to fill the screen and use Flexbox */
         body { 
             font-family: sans-serif; 
             display: flex; 
@@ -14,17 +13,18 @@
             margin: 0; 
             padding: 20px;
             box-sizing: border-box;
+            background-color: #b0f1ff; /* Custom Background */
+            align-items: center;       /* Centers everything */
+            text-align: center;
         }
         
-        /* This container pushes the button to the bottom */
-        .content { flex: 1; }
+        .content { flex: 1; width: 100%; max-width: 300px; }
         
         input, button { 
             padding: 12px; 
             margin: 8px 0; 
             width: 100%; 
-            max-width: 300px;
-            font-size: 16px; /* Prevents auto-zoom on iOS */
+            font-size: 16px; 
             box-sizing: border-box;
         }
         
@@ -34,16 +34,19 @@
             font-weight: bold; 
             border: none;
             border-radius: 5px;
+            max-width: 300px;
         }
+        
+        #clock { font-weight: bold; margin: 15px 0; color: #333; }
     </style>
 </head>
-<body onload="clearAll()">
+<body onload="clearAll(); updateClock(); setInterval(updateClock, 60000);">
 
     <div class="content">
         <h2>Currency</h2>
         <input type="number" id="amount" placeholder="Enter Amount">
         <button onclick="convert('USD')">USD to GBP</button>
-        <button onclick="convert('GBP')">GBP to USD</button>
+        <button onclick="convert('GBP')">USD to USD</button>
         <h3 id="moneyResult">Result: -</h3>
 
         <hr>
@@ -53,12 +56,13 @@
         <button onclick="convertTemp('F')">F to C</button>
         <button onclick="convertTemp('C')">C to F</button>
         <h3 id="tempResult">Result: -</h3>
+
+        <p id="clock">Time: --:--</p>
     </div>
 
     <button class="clear-btn" onclick="clearAll()">Clear All</button>
 
     <script>
-        // Currency Conversion Logic
         function convert(dir) {
             let val = document.getElementById('amount').value;
             let res = document.getElementById('moneyResult');
@@ -67,7 +71,6 @@
             res.innerText = (dir === 'USD') ? "Result: £" + (val * rate).toFixed(2) : "Result: $" + (val / rate).toFixed(2);
         }
 
-        // Temperature Conversion Logic
         function convertTemp(dir) {
             let val = parseFloat(document.getElementById('temp').value);
             let res = document.getElementById('tempResult');
@@ -75,12 +78,22 @@
             res.innerText = (dir === 'F') ? "Result: " + ((val - 32) * 5/9).toFixed(1) + "°C" : "Result: " + (val * 9/5 + 32).toFixed(1) + "°F";
         }
 
-        // Resets both inputs and result text
         function clearAll() {
             document.getElementById('amount').value = "";
             document.getElementById('temp').value = "";
             document.getElementById('moneyResult').innerText = "Result: -";
             document.getElementById('tempResult').innerText = "Result: -";
+        }
+
+        function updateClock() {
+            const now = new Date();
+            // Formats time for Eastern Time
+            const timeString = now.toLocaleTimeString("en-US", {
+                timeZone: "America/New_York",
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('clock').innerText = "EST Time: " + timeString;
         }
     </script>
 </body>
