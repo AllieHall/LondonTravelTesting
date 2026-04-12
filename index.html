@@ -8,41 +8,40 @@
         body { 
             font-family: sans-serif; display: flex; flex-direction: column; min-height: 100vh; 
             margin: 0; padding: 20px; box-sizing: border-box; background-color: #BDDDFC;
-            align-items: center; text-align: center;
-            transition: background-color 0.3s;
+            align-items: center; text-align: center; transition: background-color 0.3s;
         }
         .content { flex: 1; width: 100%; max-width: 300px; padding-bottom: 90px; }
         
         .tab-content { display: none; }
-        .active { display: block; }
-
         input { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border: 1px solid black; border-radius: 4px; box-sizing: border-box; }
         button { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
         
-        /* Themed Buttons */
         .btn-london { background-color: #384959; color: #BDDDFC; }
         .btn-greece { background-color: #2E6F40; color: #CFFFDC; }
-
-        /* Greece Body Override */
         .greece-body { background-color: #CFFFDC !important; }
+        .clear-btn { background-color: #cc0000; color: white; margin-top: 20px; }
 
-        .clear-btn { background-color: #cc0000; color: white; font-weight: bold; margin-top: 30px; width: 100%; }
-        
-        /* Tab Bar */
+        /* Updated Tab Bar Colors */
         .tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; background: #384959; }
-        .tab-btn { flex: 1; padding: 15px; color: #BDDDFC; background: none; border: none; border-top: 3px solid transparent; font-weight: bold; }
-        .tab-btn.active-tab { border-top: 3px solid #FFF; background: #2a3845; }
-        .tab-bar .btn-greece-tab { background-color: #2E6F40; color: #CFFFDC; }
-        .tab-bar .btn-greece-tab.active-tab { background-color: #235832; }
+        .tab-btn { flex: 1; padding: 15px; background: none; border: none; border-top: 3px solid transparent; font-weight: bold; color: #8096a6; }
+        .tab-btn.active-tab { border-top: 3px solid #FFF; color: #BDDDFC; background: #2a3845; }
+        .greece-body .tab-bar { background-color: #2E6F40; }
+        .greece-body .tab-btn { color: #87b393; }
+        .greece-body .tab-btn.active-tab { color: #CFFFDC; background: #235832; }
 
         #clock { font-size: 1.3em; font-weight: bold; margin: 15px 0; color: #333; }
+        .rate-box { font-size: 0.9em; margin-bottom: 10px; }
     </style>
 </head>
-<body onload="switchTab('london')">
+<body onload="initApp()">
 
     <div class="content">
         <div id="london" class="tab-content">
             <h2>London (GBP)</h2>
+            <div class="rate-box">
+                <input type="number" id="rate_london" placeholder="Enter Rate (e.g. 0.79)" step="0.0001">
+                <button class="btn-london" onclick="saveRate('london')">Save Rate</button>
+            </div>
             <input type="number" id="amt_london" placeholder="Enter Amount">
             <button class="btn-london" onclick="convert('london', 'toLocal')">USD to GBP</button>
             <button class="btn-london" onclick="convert('london', 'toUSD')">GBP to USD</button>
@@ -51,6 +50,10 @@
 
         <div id="greece" class="tab-content">
             <h2>Greece (EUR)</h2>
+            <div class="rate-box">
+                <input type="number" id="rate_greece" placeholder="Enter Rate (e.g. 0.92)" step="0.0001">
+                <button class="btn-greece" onclick="saveRate('greece')">Save Rate</button>
+            </div>
             <input type="number" id="amt_greece" placeholder="Enter Amount">
             <button class="btn-greece" onclick="convert('greece', 'toLocal')">USD to EUR</button>
             <button class="btn-greece" onclick="convert('greece', 'toUSD')">EUR to USD</button>
@@ -61,7 +64,7 @@
 
         <h2>Temperature</h2>
         <input type="number" id="temp" placeholder="Enter Degrees">
-        <button id="temp-btn" class="btn-london" onclick="convertTemp('F')">F to C</button>
+        <button id="temp-btn-1" class="btn-london" onclick="convertTemp('F')">F to C</button>
         <button id="temp-btn-2" class="btn-london" onclick="convertTemp('C')">C to F</button>
         <h3 id="tempResult">Result: -</h3>
 
@@ -75,36 +78,39 @@
     </div>
 
     <script>
+        function initApp() {
+            // Load saved rates
+            document.getElementById('rate_london').value = localStorage.getItem('rate_london') || 0.79;
+            document.getElementById('rate_greece').value = localStorage.getItem('rate_greece') || 0.92;
+            switchTab('london');
+        }
+
+        function saveRate(country) {
+            let val = document.getElementById('rate_' + country).value;
+            localStorage.setItem('rate_' + country, val);
+            alert('Rate saved for ' + country + '!');
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
             document.getElementById(tabId).style.display = 'block';
             document.getElementById('btn_' + tabId).classList.add('active-tab');
             
-            // Theme Switching
             const isGreece = (tabId === 'greece');
             document.body.className = isGreece ? 'greece-body' : '';
-            
-            // Update Temp Buttons Theme
-            const tempBtns = [document.getElementById('temp-btn'), document.getElementById('temp-btn-2')];
-            tempBtns.forEach(btn => {
-                btn.className = isGreece ? 'btn-greece' : 'btn-london';
-            });
-            
-            // Update Tab Bar Theme
-            const tabBar = document.getElementById('tab-bar');
-            tabBar.style.backgroundColor = isGreece ? '#2E6F40' : '#384959';
-            document.getElementById('btn_greece').className = isGreece ? 'tab-btn btn-greece-tab active-tab' : 'tab-btn';
+            [document.getElementById('temp-btn-1'), document.getElementById('temp-btn-2')].forEach(b => b.className = isGreece ? 'btn-greece' : 'btn-london');
             
             updateClock();
         }
 
         function convert(country, direction) {
             let val = parseFloat(document.getElementById('amt_' + country).value);
+            let rate = parseFloat(document.getElementById('rate_' + country).value);
             let res = document.getElementById('res_' + country);
-            const rate = (country === 'london') ? 0.79 : 0.92;
             const sym = (country === 'london') ? '£' : '€';
-            if (isNaN(val)) return;
+            
+            if (isNaN(val) || isNaN(rate)) return;
             res.innerText = (direction === 'toLocal') ? "Result: " + sym + (val * rate).toFixed(2) : "Result: $" + (val / rate).toFixed(2);
         }
 
@@ -115,7 +121,7 @@
         }
 
         function clearAll() {
-            document.querySelectorAll('input').forEach(i => i.value = "");
+            document.querySelectorAll('input[type="number"]:not([id^="rate_"])').forEach(i => i.value = "");
             document.querySelectorAll('h3').forEach(h => h.innerText = "Result: -");
         }
 
