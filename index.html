@@ -2,48 +2,85 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Converter App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Converter App</title>
     <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        input, button { padding: 12px; margin: 8px; width: 90%; max-width: 300px; }
-        hr { width: 90%; margin: 20px 0; }
+        /* Force body to fill the screen and use Flexbox */
+        body { 
+            font-family: sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        /* This container pushes the button to the bottom */
+        .content { flex: 1; }
+        
+        input, button { 
+            padding: 12px; 
+            margin: 8px 0; 
+            width: 100%; 
+            max-width: 300px;
+            font-size: 16px; /* Prevents auto-zoom on iOS */
+            box-sizing: border-box;
+        }
+        
+        .clear-btn { 
+            background-color: #ffcccc; 
+            color: #cc0000; 
+            font-weight: bold; 
+            border: none;
+            border-radius: 5px;
+        }
     </style>
 </head>
-<body onload="clearInput()"> <h2>Currency</h2>
-    <input type="number" id="amount" placeholder="Enter Amount">
-    <button onclick="convert('USD')">USD to GBP</button>
-    <button onclick="convert('GBP')">GBP to USD</button>
-    <h3 id="moneyResult">Result: -</h3>
+<body onload="clearAll()">
 
-    <hr>
+    <div class="content">
+        <h2>Currency</h2>
+        <input type="number" id="amount" placeholder="Enter Amount">
+        <button onclick="convert('USD')">USD to GBP</button>
+        <button onclick="convert('GBP')">GBP to USD</button>
+        <h3 id="moneyResult">Result: -</h3>
 
-    <h2>Temperature</h2>
-    <input type="number" id="temp" placeholder="Enter Degrees">
-    <button onclick="convertTemp('F')">F to C</button>
-    <button onclick="convertTemp('C')">C to F</button>
-    <h3 id="tempResult">Result: -</h3>
+        <hr>
+
+        <h2>Temperature</h2>
+        <input type="number" id="temp" placeholder="Enter Degrees">
+        <button onclick="convertTemp('F')">F to C</button>
+        <button onclick="convertTemp('C')">C to F</button>
+        <h3 id="tempResult">Result: -</h3>
+    </div>
+
+    <button class="clear-btn" onclick="clearAll()">Clear All</button>
 
     <script>
-        // Currency Logic
-        const rate = 0.79;
+        // Currency Conversion Logic
         function convert(dir) {
             let val = document.getElementById('amount').value;
             let res = document.getElementById('moneyResult');
+            const rate = 0.79;
+            if (val === "") return;
             res.innerText = (dir === 'USD') ? "Result: £" + (val * rate).toFixed(2) : "Result: $" + (val / rate).toFixed(2);
         }
 
-        // Temperature Logic
+        // Temperature Conversion Logic
         function convertTemp(dir) {
             let val = parseFloat(document.getElementById('temp').value);
             let res = document.getElementById('tempResult');
+            if (isNaN(val)) return;
             res.innerText = (dir === 'F') ? "Result: " + ((val - 32) * 5/9).toFixed(1) + "°C" : "Result: " + (val * 9/5 + 32).toFixed(1) + "°F";
         }
 
-        // Auto-clear function
-        function clearInput() {
+        // Resets both inputs and result text
+        function clearAll() {
             document.getElementById('amount').value = "";
             document.getElementById('temp').value = "";
+            document.getElementById('moneyResult').innerText = "Result: -";
+            document.getElementById('tempResult').innerText = "Result: -";
         }
     </script>
 </body>
