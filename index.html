@@ -10,39 +10,40 @@
             margin: 0; padding: 20px; box-sizing: border-box; background-color: #BDDDFC;
             align-items: center; text-align: center;
         }
-        .content { flex: 1; width: 100%; max-width: 300px; }
+        .content { flex: 1; width: 100%; max-width: 300px; padding-bottom: 70px; }
         
-        /* Tab Styles */
-        .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-btn { flex: 1; background-color: #384959; color: #BDDDFC; padding: 10px; border: none; border-radius: 5px; cursor: pointer; }
+        /* Tab Content - Hidden by default */
         .tab-content { display: none; }
         .active { display: block; }
 
         input { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border: 1px solid black; border-radius: 4px; box-sizing: border-box; }
         button { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; background-color: #384959; color: #BDDDFC; border: none; border-radius: 5px; font-weight: bold; }
+        
+        /* Fixed Bottom Tab Bar */
+        .tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; background: #384959; }
+        .tab-btn { flex: 1; padding: 15px; color: #BDDDFC; background: none; border: none; border-top: 3px solid transparent; }
+        .tab-btn.active-tab { border-top: 3px solid #FFF; background: #2a3845; }
+
         .clear-btn { background-color: #cc0000; color: white; font-weight: bold; margin-top: 20px; }
-        #clock { font-size: 1.2em; font-weight: bold; margin: 15px 0; color: #333; }
+        #clock { font-size: 1.3em; font-weight: bold; margin: 15px 0; color: #333; }
     </style>
 </head>
-<body onload="showTab('london'); updateClock(); setInterval(updateClock, 60000);">
+<body onload="switchTab('london')">
 
     <div class="content">
-        <div class="tab-buttons">
-            <button class="tab-btn" onclick="showTab('london')">London</button>
-            <button class="tab-btn" onclick="showTab('greece')">Greece</button>
-        </div>
-
         <div id="london" class="tab-content">
-            <h2>GBP Converter</h2>
-            <input type="number" id="amt_london" placeholder="Amount (USD)">
-            <button onclick="convert('london')">Convert</button>
+            <h2>London (GBP)</h2>
+            <input type="number" id="amt_london" placeholder="Enter Amount">
+            <button onclick="convert('london', 'toLocal')">USD to GBP</button>
+            <button onclick="convert('london', 'toUSD')">GBP to USD</button>
             <h3 id="res_london">Result: -</h3>
         </div>
 
         <div id="greece" class="tab-content">
-            <h2>EUR Converter</h2>
-            <input type="number" id="amt_greece" placeholder="Amount (USD)">
-            <button onclick="convert('greece')">Convert</button>
+            <h2>Greece (EUR)</h2>
+            <input type="number" id="amt_greece" placeholder="Enter Amount">
+            <button onclick="convert('greece', 'toLocal')">USD to EUR</button>
+            <button onclick="convert('greece', 'toUSD')">EUR to USD</button>
             <h3 id="res_greece">Result: -</h3>
         </div>
 
@@ -54,22 +55,31 @@
         <button onclick="convertTemp('C')">C to F</button>
         <h3 id="tempResult">Result: -</h3>
 
-        <p id="clock">Time: --:--</p>
+        <p id="clock">EST Time: --:--</p>
+        <button class="clear-btn" onclick="clearAll()">Clear All</button>
     </div>
 
-    <button class="clear-btn" onclick="clearAll()">Clear All</button>
+    <div class="tab-bar">
+        <button class="tab-btn" id="btn_london" onclick="switchTab('london')">London</button>
+        <button class="tab-btn" id="btn_greece" onclick="switchTab('greece')">Greece</button>
+    </div>
 
     <script>
-        function showTab(tabId) {
+        function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
             document.getElementById(tabId).style.display = 'block';
+            document.getElementById('btn_' + tabId).classList.add('active-tab');
+            updateClock();
+            setInterval(updateClock, 60000);
         }
 
-        function convert(country) {
-            let val = document.getElementById('amt_' + country).value;
+        function convert(country, direction) {
+            let val = parseFloat(document.getElementById('amt_' + country).value);
             let res = document.getElementById('res_' + country);
-            const rate = (country === 'london') ? 0.79 : 0.92; // GBP vs EUR rates
-            res.innerText = "Result: " + (val * rate).toFixed(2);
+            const rate = (country === 'london') ? 0.79 : 0.92;
+            if (isNaN(val)) return;
+            res.innerText = (direction === 'toLocal') ? "Result: " + (val * rate).toFixed(2) : "Result: " + (val / rate).toFixed(2);
         }
 
         function convertTemp(dir) {
