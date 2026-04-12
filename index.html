@@ -13,31 +13,48 @@
             margin: 0; 
             padding: 20px;
             box-sizing: border-box;
-            background-color: #b0f1ff; /* Custom Background */
-            align-items: center;       /* Centers everything */
+            background-color: #FFFDD0; /* Cream background */
+            align-items: center;
             text-align: center;
         }
         
         .content { flex: 1; width: 100%; max-width: 300px; }
         
-        input, button { 
+        input { 
             padding: 12px; 
             margin: 8px 0; 
             width: 100%; 
             font-size: 16px; 
             box-sizing: border-box;
+            border: 1px solid black; /* Thin black border */
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 12px;
+            margin: 8px 0;
+            width: 100%;
+            font-size: 16px;
+            box-sizing: border-box;
+            background-color: #000080; /* Navy Blue */
+            color: #FFFDD0; /* Cream text */
+            border: none;
+            border-radius: 5px;
         }
         
         .clear-btn { 
-            background-color: #ffcccc; 
-            color: #cc0000; 
+            background-color: #cc0000; /* Keeping a distinct red for 'Clear' */
+            color: white; 
             font-weight: bold; 
-            border: none;
-            border-radius: 5px;
             max-width: 300px;
         }
         
-        #clock { font-weight: bold; margin: 15px 0; color: #333; }
+        #clock { 
+            font-size: 1.2em; /* Slightly larger font */
+            font-weight: bold; 
+            margin: 15px 0; 
+            color: #333; 
+        }
     </style>
 </head>
 <body onload="clearAll(); updateClock(); setInterval(updateClock, 60000);">
@@ -46,7 +63,7 @@
         <h2>Currency</h2>
         <input type="number" id="amount" placeholder="Enter Amount">
         <button onclick="convert('USD')">USD to GBP</button>
-        <button onclick="convert('GBP')">USD to USD</button>
+        <button onclick="convert('GBP')">GBP to USD</button>
         <h3 id="moneyResult">Result: -</h3>
 
         <hr>
@@ -67,34 +84,3 @@
             let val = document.getElementById('amount').value;
             let res = document.getElementById('moneyResult');
             const rate = 0.79;
-            if (val === "") return;
-            res.innerText = (dir === 'USD') ? "Result: £" + (val * rate).toFixed(2) : "Result: $" + (val / rate).toFixed(2);
-        }
-
-        function convertTemp(dir) {
-            let val = parseFloat(document.getElementById('temp').value);
-            let res = document.getElementById('tempResult');
-            if (isNaN(val)) return;
-            res.innerText = (dir === 'F') ? "Result: " + ((val - 32) * 5/9).toFixed(1) + "°C" : "Result: " + (val * 9/5 + 32).toFixed(1) + "°F";
-        }
-
-        function clearAll() {
-            document.getElementById('amount').value = "";
-            document.getElementById('temp').value = "";
-            document.getElementById('moneyResult').innerText = "Result: -";
-            document.getElementById('tempResult').innerText = "Result: -";
-        }
-
-        function updateClock() {
-            const now = new Date();
-            // Formats time for Eastern Time
-            const timeString = now.toLocaleTimeString("en-US", {
-                timeZone: "America/New_York",
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            document.getElementById('clock').innerText = "EST Time: " + timeString;
-        }
-    </script>
-</body>
-</html>
