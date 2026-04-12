@@ -9,47 +9,51 @@
             font-family: sans-serif; display: flex; flex-direction: column; min-height: 100vh; 
             margin: 0; padding: 20px; box-sizing: border-box; background-color: #BDDDFC;
             align-items: center; text-align: center;
+            transition: background-color 0.3s;
         }
-        .content { flex: 1; width: 100%; max-width: 300px; padding-bottom: 80px; }
+        .content { flex: 1; width: 100%; max-width: 300px; padding-bottom: 90px; }
         
         .tab-content { display: none; }
         .active { display: block; }
 
         input { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border: 1px solid black; border-radius: 4px; box-sizing: border-box; }
-        button { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border: none; border-radius: 5px; font-weight: bold; }
+        button { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
         
-        /* London Styles */
-        .london-btn { background-color: #384959; color: #BDDDFC; }
-        
-        /* Greece Styles - Dynamic based on tab */
-        .greece-body { background-color: #CFFFDC !important; }
-        .greece-btn { background-color: #2E6F40; color: #CFFFDC; }
+        /* Themed Buttons */
+        .btn-london { background-color: #384959; color: #BDDDFC; }
+        .btn-greece { background-color: #2E6F40; color: #CFFFDC; }
 
-        .clear-btn { background-color: #cc0000; color: white; font-weight: bold; margin-top: 20px; width: 100%; }
+        /* Greece Body Override */
+        .greece-body { background-color: #CFFFDC !important; }
+
+        .clear-btn { background-color: #cc0000; color: white; font-weight: bold; margin-top: 30px; width: 100%; }
         
+        /* Tab Bar */
         .tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; background: #384959; }
-        .tab-btn { flex: 1; padding: 15px; color: #BDDDFC; background: none; border: none; border-top: 3px solid transparent; }
+        .tab-btn { flex: 1; padding: 15px; color: #BDDDFC; background: none; border: none; border-top: 3px solid transparent; font-weight: bold; }
         .tab-btn.active-tab { border-top: 3px solid #FFF; background: #2a3845; }
-        
+        .tab-bar .btn-greece-tab { background-color: #2E6F40; color: #CFFFDC; }
+        .tab-bar .btn-greece-tab.active-tab { background-color: #235832; }
+
         #clock { font-size: 1.3em; font-weight: bold; margin: 15px 0; color: #333; }
     </style>
 </head>
 <body onload="switchTab('london')">
 
-    <div class="content" id="main-container">
+    <div class="content">
         <div id="london" class="tab-content">
             <h2>London (GBP)</h2>
             <input type="number" id="amt_london" placeholder="Enter Amount">
-            <button class="london-btn" onclick="convert('london', 'toLocal')">USD to GBP</button>
-            <button class="london-btn" onclick="convert('london', 'toUSD')">GBP to USD</button>
+            <button class="btn-london" onclick="convert('london', 'toLocal')">USD to GBP</button>
+            <button class="btn-london" onclick="convert('london', 'toUSD')">GBP to USD</button>
             <h3 id="res_london">Result: -</h3>
         </div>
 
         <div id="greece" class="tab-content">
             <h2>Greece (EUR)</h2>
             <input type="number" id="amt_greece" placeholder="Enter Amount">
-            <button class="greece-btn" onclick="convert('greece', 'toLocal')">USD to EUR</button>
-            <button class="greece-btn" onclick="convert('greece', 'toUSD')">EUR to USD</button>
+            <button class="btn-greece" onclick="convert('greece', 'toLocal')">USD to EUR</button>
+            <button class="btn-greece" onclick="convert('greece', 'toUSD')">EUR to USD</button>
             <h3 id="res_greece">Result: -</h3>
         </div>
 
@@ -57,15 +61,15 @@
 
         <h2>Temperature</h2>
         <input type="number" id="temp" placeholder="Enter Degrees">
-        <button class="london-btn" onclick="convertTemp('F')">F to C</button>
-        <button class="london-btn" onclick="convertTemp('C')">C to F</button>
+        <button id="temp-btn" class="btn-london" onclick="convertTemp('F')">F to C</button>
+        <button id="temp-btn-2" class="btn-london" onclick="convertTemp('C')">C to F</button>
         <h3 id="tempResult">Result: -</h3>
 
         <p id="clock">EST Time: --:--</p>
         <button class="clear-btn" onclick="clearAll()">Clear All</button>
     </div>
 
-    <div class="tab-bar">
+    <div class="tab-bar" id="tab-bar">
         <button class="tab-btn" id="btn_london" onclick="switchTab('london')">London</button>
         <button class="tab-btn" id="btn_greece" onclick="switchTab('greece')">Greece</button>
     </div>
@@ -77,8 +81,20 @@
             document.getElementById(tabId).style.display = 'block';
             document.getElementById('btn_' + tabId).classList.add('active-tab');
             
-            // Toggle body background color based on tab
-            document.body.className = (tabId === 'greece') ? 'greece-body' : '';
+            // Theme Switching
+            const isGreece = (tabId === 'greece');
+            document.body.className = isGreece ? 'greece-body' : '';
+            
+            // Update Temp Buttons Theme
+            const tempBtns = [document.getElementById('temp-btn'), document.getElementById('temp-btn-2')];
+            tempBtns.forEach(btn => {
+                btn.className = isGreece ? 'btn-greece' : 'btn-london';
+            });
+            
+            // Update Tab Bar Theme
+            const tabBar = document.getElementById('tab-bar');
+            tabBar.style.backgroundColor = isGreece ? '#2E6F40' : '#384959';
+            document.getElementById('btn_greece').className = isGreece ? 'tab-btn btn-greece-tab active-tab' : 'tab-btn';
             
             updateClock();
         }
@@ -88,14 +104,8 @@
             let res = document.getElementById('res_' + country);
             const rate = (country === 'london') ? 0.79 : 0.92;
             const sym = (country === 'london') ? '£' : '€';
-            
             if (isNaN(val)) return;
-            
-            if (direction === 'toLocal') {
-                res.innerText = "Result: " + sym + (val * rate).toFixed(2);
-            } else {
-                res.innerText = "Result: $" + (val / rate).toFixed(2);
-            }
+            res.innerText = (direction === 'toLocal') ? "Result: " + sym + (val * rate).toFixed(2) : "Result: $" + (val / rate).toFixed(2);
         }
 
         function convertTemp(dir) {
