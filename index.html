@@ -10,40 +10,46 @@
             margin: 0; padding: 20px; box-sizing: border-box; background-color: #BDDDFC;
             align-items: center; text-align: center;
         }
-        .content { flex: 1; width: 100%; max-width: 300px; padding-bottom: 70px; }
+        .content { flex: 1; width: 100%; max-width: 300px; padding-bottom: 80px; }
         
-        /* Tab Content - Hidden by default */
         .tab-content { display: none; }
         .active { display: block; }
 
         input { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border: 1px solid black; border-radius: 4px; box-sizing: border-box; }
-        button { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; background-color: #384959; color: #BDDDFC; border: none; border-radius: 5px; font-weight: bold; }
+        button { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border: none; border-radius: 5px; font-weight: bold; }
         
-        /* Fixed Bottom Tab Bar */
+        /* London Styles */
+        .london-btn { background-color: #384959; color: #BDDDFC; }
+        
+        /* Greece Styles - Dynamic based on tab */
+        .greece-body { background-color: #CFFFDC !important; }
+        .greece-btn { background-color: #2E6F40; color: #CFFFDC; }
+
+        .clear-btn { background-color: #cc0000; color: white; font-weight: bold; margin-top: 20px; width: 100%; }
+        
         .tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; background: #384959; }
         .tab-btn { flex: 1; padding: 15px; color: #BDDDFC; background: none; border: none; border-top: 3px solid transparent; }
         .tab-btn.active-tab { border-top: 3px solid #FFF; background: #2a3845; }
-
-        .clear-btn { background-color: #cc0000; color: white; font-weight: bold; margin-top: 20px; }
+        
         #clock { font-size: 1.3em; font-weight: bold; margin: 15px 0; color: #333; }
     </style>
 </head>
 <body onload="switchTab('london')">
 
-    <div class="content">
+    <div class="content" id="main-container">
         <div id="london" class="tab-content">
             <h2>London (GBP)</h2>
             <input type="number" id="amt_london" placeholder="Enter Amount">
-            <button onclick="convert('london', 'toLocal')">USD to GBP</button>
-            <button onclick="convert('london', 'toUSD')">GBP to USD</button>
+            <button class="london-btn" onclick="convert('london', 'toLocal')">USD to GBP</button>
+            <button class="london-btn" onclick="convert('london', 'toUSD')">GBP to USD</button>
             <h3 id="res_london">Result: -</h3>
         </div>
 
         <div id="greece" class="tab-content">
             <h2>Greece (EUR)</h2>
             <input type="number" id="amt_greece" placeholder="Enter Amount">
-            <button onclick="convert('greece', 'toLocal')">USD to EUR</button>
-            <button onclick="convert('greece', 'toUSD')">EUR to USD</button>
+            <button class="greece-btn" onclick="convert('greece', 'toLocal')">USD to EUR</button>
+            <button class="greece-btn" onclick="convert('greece', 'toUSD')">EUR to USD</button>
             <h3 id="res_greece">Result: -</h3>
         </div>
 
@@ -51,8 +57,8 @@
 
         <h2>Temperature</h2>
         <input type="number" id="temp" placeholder="Enter Degrees">
-        <button onclick="convertTemp('F')">F to C</button>
-        <button onclick="convertTemp('C')">C to F</button>
+        <button class="london-btn" onclick="convertTemp('F')">F to C</button>
+        <button class="london-btn" onclick="convertTemp('C')">C to F</button>
         <h3 id="tempResult">Result: -</h3>
 
         <p id="clock">EST Time: --:--</p>
@@ -70,16 +76,26 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
             document.getElementById(tabId).style.display = 'block';
             document.getElementById('btn_' + tabId).classList.add('active-tab');
+            
+            // Toggle body background color based on tab
+            document.body.className = (tabId === 'greece') ? 'greece-body' : '';
+            
             updateClock();
-            setInterval(updateClock, 60000);
         }
 
         function convert(country, direction) {
             let val = parseFloat(document.getElementById('amt_' + country).value);
             let res = document.getElementById('res_' + country);
             const rate = (country === 'london') ? 0.79 : 0.92;
+            const sym = (country === 'london') ? '£' : '€';
+            
             if (isNaN(val)) return;
-            res.innerText = (direction === 'toLocal') ? "Result: " + (val * rate).toFixed(2) : "Result: " + (val / rate).toFixed(2);
+            
+            if (direction === 'toLocal') {
+                res.innerText = "Result: " + sym + (val * rate).toFixed(2);
+            } else {
+                res.innerText = "Result: $" + (val / rate).toFixed(2);
+            }
         }
 
         function convertTemp(dir) {
