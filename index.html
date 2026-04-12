@@ -13,7 +13,7 @@
             margin: 0; 
             padding: 20px;
             box-sizing: border-box;
-            background-color: #FFFDD0; /* Cream background */
+            background-color: #BDDDFC; /* Requested Background */
             align-items: center;
             text-align: center;
         }
@@ -26,7 +26,7 @@
             width: 100%; 
             font-size: 16px; 
             box-sizing: border-box;
-            border: 1px solid black; /* Thin black border */
+            border: 1px solid black; 
             border-radius: 4px;
         }
 
@@ -36,21 +36,22 @@
             width: 100%;
             font-size: 16px;
             box-sizing: border-box;
-            background-color: #000080; /* Navy Blue */
-            color: #FFFDD0; /* Cream text */
+            background-color: #384959; /* Requested Button Color */
+            color: #BDDDFC;           /* Requested Text Color */
             border: none;
             border-radius: 5px;
+            font-weight: bold;
         }
         
         .clear-btn { 
-            background-color: #cc0000; /* Keeping a distinct red for 'Clear' */
+            background-color: #cc0000; /* Keeping distinct for clarity */
             color: white; 
             font-weight: bold; 
             max-width: 300px;
         }
         
         #clock { 
-            font-size: 1.2em; /* Slightly larger font */
+            font-size: 1.2em; 
             font-weight: bold; 
             margin: 15px 0; 
             color: #333; 
@@ -84,3 +85,24 @@
             let val = document.getElementById('amount').value;
             let res = document.getElementById('moneyResult');
             const rate = 0.79;
+            if (val === "") return;
+            res.innerText = (dir === 'USD') ? "Result: £" + (val * rate).toFixed(2) : "Result: $" + (val / rate).toFixed(2);
+        }
+
+        function convertTemp(dir) {
+            let val = parseFloat(document.getElementById('temp').value);
+            let res = document.getElementById('tempResult');
+            if (isNaN(val)) return;
+            res.innerText = (dir === 'F') ? "Result: " + ((val - 32) * 5/9).toFixed(1) + "°C" : "Result: " + (val * 9/5 + 32).toFixed(1) + "°F";
+        }
+
+        function clearAll() {
+            document.getElementById('amount').value = "";
+            document.getElementById('temp').value = "";
+            document.getElementById('moneyResult').innerText = "Result: -";
+            document.getElementById('tempResult').innerText = "Result: -";
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString("en
