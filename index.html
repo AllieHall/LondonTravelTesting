@@ -8,44 +8,37 @@
         body { font-family: sans-serif; display: flex; flex-direction: column; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; background-color: #BDDDFC; align-items: center; text-align: center; transition: background-color 0.3s; }
         .content { flex: 1; width: 100%; max-width: 300px; padding-bottom: 90px; }
         .tab-content { display: none; }
+        
+        /* Gear Icon */
+        .gear-icon { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 24px; color: #333; }
+        
         input { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border: 1px solid black; border-radius: 4px; box-sizing: border-box; }
         button { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
         
         /* Themed Buttons */
         .btn-london { background-color: #384959; color: #BDDDFC; }
         .btn-canada { background-color: #ff7575; color: #fff2f2; }
-        .btn-spain { background-color: #FFD700; color: #fff2f2; }
+        .btn-spain { background-color: #E6B800; color: #fff2f2; } /* Slightly darker gold */
         .btn-greece { background-color: #385939; color: #c9f0cb; }
-        .btn-setup { background-color: #CCCCCC; color: #000000; }
         
-        /* Dropdown style */
+        /* Setup Modal/Section */
+        #settings-page { display: none; padding: 20px; background: #fff; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; overflow-y: auto; }
+        .btn-setup { background-color: #999999; color: #000000; }
         select { padding: 10px; width: 100%; margin-top: 10px; background-color: #FFFFFF; color: #000000; border: 1px solid #000; border-radius: 4px; }
 
-        /* Body Backgrounds */
         .canada-body { background-color: #fff2f2 !important; }
         .spain-body { background-color: #fff2f2 !important; }
         .greece-body { background-color: #c9f0cb !important; }
-        .rates-body { background-color: #EEEEEE !important; }
         .clear-btn { background-color: #cc0000; color: white; margin-top: 20px; }
 
         .tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; background: #384959; transition: background 0.3s; }
         .tab-btn { flex: 1; padding: 15px; background: none; border: none; border-top: 3px solid transparent; font-weight: bold; color: #8096a6; }
         .tab-btn.active-tab { border-top: 3px solid #FFF; color: #BDDDFC; background: #2a3845; }
         
-        /* Theme Variations */
         .canada-body .tab-bar { background-color: #ff7575; }
-        .canada-body .tab-btn { color: #fcc9c9; }
-        .canada-body .tab-btn.active-tab { color: #fff2f2; background: #e66969; }
-        .spain-body .tab-bar { background-color: #FFD700; }
-        .spain-body .tab-btn { color: #887200; }
-        .spain-body .tab-btn.active-tab { color: #fff2f2; background: #d4b300; }
+        .spain-body .tab-bar { background-color: #E6B800; }
         .greece-body .tab-bar { background-color: #385939; }
-        .greece-body .tab-btn { color: #82a884; }
-        .greece-body .tab-btn.active-tab { color: #c9f0cb; background: #2d472d; }
-        .rates-body .tab-bar { background-color: #BBBBBB; }
-        .rates-body .tab-btn { color: #777777; }
-        .rates-body .tab-btn.active-tab { color: #333333; background: #AAAAAA; }
-
+        
         .clock-display { font-size: 1.0em; font-style: italic; font-weight: normal; margin: 15px 0; color: #555; }
         .rate-container { margin-bottom: 25px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
     </style>
@@ -53,31 +46,91 @@
 <body onload="initApp()">
 
     <div class="content">
-        <div id="london" class="tab-content"><h2>London (GBP)</h2><input type="number" id="amt_london" placeholder="Enter Amount"><button class="btn-london" onclick="convert('london', 'toLocal')">USD to GBP</button><button class="btn-london" onclick="convert('london', 'toUSD')">GBP to USD</button><h3 id="res_london">Result: -</h3><hr><h2>Temperature</h2><input type="number" id="temp" placeholder="Enter Degrees"><button id="temp-btn-1" class="btn-london" onclick="convertTemp('F')">F to C</button><button id="temp-btn-2" class="btn-london" onclick="convertTemp('C')">C to F</button><h3 id="tempResult">Result: -</h3><p id="clock1" class="clock-display">EST Time: --:--</p><button class="clear-btn" onclick="clearAll()">Clear All</button></div>
-        
-        <div id="canada" class="tab-content"><h2>Canada (CAD)</h2><input type="number" id="amt_canada" placeholder="Enter Amount"><button class="btn-canada" onclick="convert('canada', 'toLocal')">USD to CAD</button><button class="btn-canada" onclick="convert('canada', 'toUSD')">CAD to USD</button><h3 id="res_canada">Result: -</h3><hr><h2>Temperature</h2><input type="number" id="temp_canada" placeholder="Enter Degrees"><button id="temp-btn-5" class="btn-canada" onclick="convertTemp('F')">F to C</button><button id="temp-btn-6" class="btn-canada" onclick="convertTemp('C')">C to F</button><h3 id="tempResult_canada">Result: -</h3><p id="clock3" class="clock-display">EST Time: --:--</p><button class="clear-btn" onclick="clearAll()">Clear All</button></div>
-        
-        <div id="spain" class="tab-content"><h2>Spain (EUR)</h2><input type="number" id="amt_spain" placeholder="Enter Amount"><button class="btn-spain" onclick="convert('spain', 'toLocal')">USD to EUR</button><button class="btn-spain" onclick="convert('spain', 'toUSD')">EUR to USD</button><h3 id="res_spain">Result: -</h3><hr><h2>Temperature</h2><input type="number" id="temp_spain" placeholder="Enter Degrees"><button id="temp-btn-7" class="btn-spain" onclick="convertTemp('F')">F to C</button><button id="temp-btn-8" class="btn-spain" onclick="convertTemp('C')">C to F</button><h3 id="tempResult_spain">Result: -</h3><p id="clock4" class="clock-display">EST Time: --:--</p><button class="clear-btn" onclick="clearAll()">Clear All</button></div>
-        
-        <div id="greece" class="tab-content"><h2>Greece (EUR)</h2><input type="number" id="amt_greece" placeholder="Enter Amount"><button class="btn-greece" onclick="convert('greece', 'toLocal')">USD to EUR</button><button class="btn-greece" onclick="convert('greece', 'toUSD')">EUR to USD</button><h3 id="res_greece">Result: -</h3><hr><h2>Temperature</h2><input type="number" id="temp_greece" placeholder="Enter Degrees"><button id="temp-btn-3" class="btn-greece" onclick="convertTemp('F')">F to C</button><button id="temp-btn-4" class="btn-greece" onclick="convertTemp('C')">C to F</button><h3 id="tempResult_greece">Result: -</h3><p id="clock2" class="clock-display">EST Time: --:--</p><button class="clear-btn" onclick="clearAll()">Clear All</button></div>
-
-        <div id="rates" class="tab-content">
-            <h2>Settings</h2>
-            <div class="rate-container">
-                <h3>Default Tab</h3>
-                <select id="defaultTabSelect">
-                    <option value="london">London</option>
-                    <option value="canada">Canada</option>
-                    <option value="spain">Spain</option>
-                    <option value="greece">Greece</option>
-                </select>
-                <button class="btn-setup" onclick="saveDefaultTab()">Save Default Tab</button>
-            </div>
-            <div class="rate-container"><h3>London (USD to GBP)</h3><input type="number" id="rate_london" placeholder="Current Rate" step="0.0001"><button class="btn-london" onclick="saveRate('london')">Save London Rate</button></div>
-            <div class="rate-container"><h3>Canada (USD to CAD)</h3><input type="number" id="rate_canada" placeholder="Current Rate" step="0.0001"><button class="btn-canada" onclick="saveRate('canada')">Save Canada Rate</button></div>
-            <div class="rate-container"><h3>Spain (USD to EUR)</h3><input type="number" id="rate_spain" placeholder="Current Rate" step="0.0001"><button class="btn-spain" onclick="saveRate('spain')">Save Spain Rate</button></div>
-            <div class="rate-container"><h3>Greece (USD to EUR)</h3><input type="number" id="rate_greece" placeholder="Current Rate" step="0.0001"><button class="btn-greece" onclick="saveRate('greece')">Save Greece Rate</button></div>
+        <div id="london" class="tab-content">
+            <span class="gear-icon" onclick="openSettings()">⚙️</span>
+            <h2>London (GBP)</h2>
+            <input type="number" id="amt_london" placeholder="Enter Amount">
+            <button class="btn-london" onclick="convert('london', 'toLocal')">USD to GBP</button>
+            <button class="btn-london" onclick="convert('london', 'toUSD')">GBP to USD</button>
+            <h3 id="res_london">Result: -</h3>
+            <hr>
+            <h2>Temperature</h2>
+            <input type="number" id="temp" placeholder="Enter Degrees">
+            <button class="btn-london" onclick="convertTemp('F')">F to C</button>
+            <button class="btn-london" onclick="convertTemp('C')">C to F</button>
+            <h3 id="tempResult">Result: -</h3>
+            <p id="clock1" class="clock-display">EST Time: --:--</p>
+            <button class="clear-btn" onclick="clearAll()">Clear All</button>
         </div>
+
+        <div id="canada" class="tab-content">
+            <span class="gear-icon" onclick="openSettings()">⚙️</span>
+            <h2>Canada (CAD)</h2>
+            <input type="number" id="amt_canada" placeholder="Enter Amount">
+            <button class="btn-canada" onclick="convert('canada', 'toLocal')">USD to CAD</button>
+            <button class="btn-canada" onclick="convert('canada', 'toUSD')">CAD to USD</button>
+            <h3 id="res_canada">Result: -</h3>
+            <hr>
+            <h2>Temperature</h2>
+            <input type="number" id="temp_canada" placeholder="Enter Degrees">
+            <button class="btn-canada" onclick="convertTemp('F')">F to C</button>
+            <button class="btn-canada" onclick="convertTemp('C')">C to F</button>
+            <h3 id="tempResult_canada">Result: -</h3>
+            <p id="clock3" class="clock-display">EST Time: --:--</p>
+            <button class="clear-btn" onclick="clearAll()">Clear All</button>
+        </div>
+
+        <div id="spain" class="tab-content">
+            <span class="gear-icon" onclick="openSettings()">⚙️</span>
+            <h2>Spain (EUR)</h2>
+            <input type="number" id="amt_spain" placeholder="Enter Amount">
+            <button class="btn-spain" onclick="convert('spain', 'toLocal')">USD to EUR</button>
+            <button class="btn-spain" onclick="convert('spain', 'toUSD')">EUR to USD</button>
+            <h3 id="res_spain">Result: -</h3>
+            <hr>
+            <h2>Temperature</h2>
+            <input type="number" id="temp_spain" placeholder="Enter Degrees">
+            <button class="btn-spain" onclick="convertTemp('F')">F to C</button>
+            <button class="btn-spain" onclick="convertTemp('C')">C to F</button>
+            <h3 id="tempResult_spain">Result: -</h3>
+            <p id="clock4" class="clock-display">EST Time: --:--</p>
+            <button class="clear-btn" onclick="clearAll()">Clear All</button>
+        </div>
+
+        <div id="greece" class="tab-content">
+            <span class="gear-icon" onclick="openSettings()">⚙️</span>
+            <h2>Greece (EUR)</h2>
+            <input type="number" id="amt_greece" placeholder="Enter Amount">
+            <button class="btn-greece" onclick="convert('greece', 'toLocal')">USD to EUR</button>
+            <button class="btn-greece" onclick="convert('greece', 'toUSD')">EUR to USD</button>
+            <h3 id="res_greece">Result: -</h3>
+            <hr>
+            <h2>Temperature</h2>
+            <input type="number" id="temp_greece" placeholder="Enter Degrees">
+            <button class="btn-greece" onclick="convertTemp('F')">F to C</button>
+            <button class="btn-greece" onclick="convertTemp('C')">C to F</button>
+            <h3 id="tempResult_greece">Result: -</h3>
+            <p id="clock2" class="clock-display">EST Time: --:--</p>
+            <button class="clear-btn" onclick="clearAll()">Clear All</button>
+        </div>
+    </div>
+
+    <div id="settings-page">
+        <h2>Settings</h2>
+        <button onclick="closeSettings()">Close</button>
+        <div class="rate-container">
+            <h3>Default Tab</h3>
+            <select id="defaultTabSelect">
+                <option value="london">London</option>
+                <option value="canada">Canada</option>
+                <option value="spain">Spain</option>
+                <option value="greece">Greece</option>
+            </select>
+            <button class="btn-setup" onclick="saveDefaultTab()">Save Default Tab</button>
+        </div>
+        <div class="rate-container"><h3>London (USD to GBP)</h3><input type="number" id="rate_london" step="0.0001"><button class="btn-london" onclick="saveRate('london')">Save London Rate</button></div>
+        <div class="rate-container"><h3>Canada (USD to CAD)</h3><input type="number" id="rate_canada" step="0.0001"><button class="btn-canada" onclick="saveRate('canada')">Save Canada Rate</button></div>
+        <div class="rate-container"><h3>Spain/Greece (USD to EUR)</h3><input type="number" id="rate_euro" step="0.0001"><button class="btn-spain" onclick="saveEuroRate()">Save EUR Rate</button></div>
     </div>
 
     <div class="tab-bar" id="tab-bar">
@@ -85,52 +138,53 @@
         <button class="tab-btn" id="btn_canada" onclick="switchTab('canada')">Canada</button>
         <button class="tab-btn" id="btn_spain" onclick="switchTab('spain')">Spain</button>
         <button class="tab-btn" id="btn_greece" onclick="switchTab('greece')">Greece</button>
-        <button class="tab-btn" id="btn_rates" onclick="switchTab('rates')">Setup</button>
     </div>
 
     <script>
         function initApp() {
             if (!localStorage.getItem('rate_london')) localStorage.setItem('rate_london', 0.74);
             if (!localStorage.getItem('rate_canada')) localStorage.setItem('rate_canada', 1.38);
-            if (!localStorage.getItem('rate_spain')) localStorage.setItem('rate_spain', 0.85);
-            if (!localStorage.getItem('rate_greece')) localStorage.setItem('rate_greece', 0.85);
+            if (!localStorage.getItem('rate_euro')) localStorage.setItem('rate_euro', 0.85);
+            
             document.getElementById('rate_london').value = localStorage.getItem('rate_london');
             document.getElementById('rate_canada').value = localStorage.getItem('rate_canada');
-            document.getElementById('rate_spain').value = localStorage.getItem('rate_spain');
-            document.getElementById('rate_greece').value = localStorage.getItem('rate_greece');
+            document.getElementById('rate_euro').value = localStorage.getItem('rate_euro');
             document.getElementById('defaultTabSelect').value = localStorage.getItem('preferredTab') || 'london';
+            
             setInterval(updateClock, 60000);
             updateClock();
             switchTab(localStorage.getItem('preferredTab') || 'london');
         }
-        function saveDefaultTab() { localStorage.setItem('preferredTab', document.getElementById('defaultTabSelect').value); alert('Default tab saved!'); }
+        function openSettings() { document.getElementById('settings-page').style.display = 'block'; }
+        function closeSettings() { document.getElementById('settings-page').style.display = 'none'; }
+        function saveDefaultTab() { localStorage.setItem('preferredTab', document.getElementById('defaultTabSelect').value); alert('Default saved!'); }
         function saveRate(country) { localStorage.setItem('rate_' + country, document.getElementById('rate_' + country).value); alert('Rate saved!'); }
+        function saveEuroRate() { localStorage.setItem('rate_euro', document.getElementById('rate_euro').value); alert('Euro rate saved!'); }
+        
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
             document.getElementById(tabId).style.display = 'block';
             document.getElementById('btn_' + tabId).classList.add('active-tab');
-            if (tabId === 'canada') document.body.className = 'canada-body';
-            else if (tabId === 'spain') document.body.className = 'spain-body';
-            else if (tabId === 'greece') document.body.className = 'greece-body';
-            else if (tabId === 'rates') document.body.className = 'rates-body';
-            else document.body.className = '';
+            document.body.className = tabId + '-body';
             updateClock();
         }
+        
         function convert(country, direction) {
             let val = parseFloat(document.getElementById('amt_' + country).value);
-            let rate = parseFloat(localStorage.getItem('rate_' + country));
+            let rate = (country === 'spain' || country === 'greece') ? parseFloat(localStorage.getItem('rate_euro')) : parseFloat(localStorage.getItem('rate_' + country));
             let res = document.getElementById('res_' + country);
             const symbols = { 'london': '£', 'canada': 'C$', 'spain': '€', 'greece': '€' };
             if (isNaN(val)) return;
             res.innerText = (direction === 'toLocal') ? "Result: " + symbols[country] + (val * rate).toFixed(2) : "Result: $" + (val / rate).toFixed(2);
         }
+        
         function convertTemp(dir) {
             let bodyClass = document.body.className;
             let val, res;
-            if (bodyClass.includes('canada-body')) { val = parseFloat(document.getElementById('temp_canada').value); res = document.getElementById('tempResult_canada'); }
-            else if (bodyClass.includes('spain-body')) { val = parseFloat(document.getElementById('temp_spain').value); res = document.getElementById('tempResult_spain'); }
-            else if (bodyClass.includes('greece-body')) { val = parseFloat(document.getElementById('temp_greece').value); res = document.getElementById('tempResult_greece'); }
+            if (bodyClass.includes('canada')) { val = parseFloat(document.getElementById('temp_canada').value); res = document.getElementById('tempResult_canada'); }
+            else if (bodyClass.includes('spain')) { val = parseFloat(document.getElementById('temp_spain').value); res = document.getElementById('tempResult_spain'); }
+            else if (bodyClass.includes('greece')) { val = parseFloat(document.getElementById('temp_greece').value); res = document.getElementById('tempResult_greece'); }
             else { val = parseFloat(document.getElementById('temp').value); res = document.getElementById('tempResult'); }
             if (isNaN(val)) return;
             res.innerText = (dir === 'F') ? ((val - 32) * 5/9).toFixed(1) + "°C" : (val * 9/5 + 32).toFixed(1) + "°F";
@@ -138,10 +192,7 @@
         function clearAll() { document.querySelectorAll('input[type="number"]:not([id^="rate_"])').forEach(i => i.value = ""); document.querySelectorAll('h3').forEach(h => h.innerText = "Result: -"); }
         function updateClock() {
             const timeString = new Date().toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: '2-digit', minute: '2-digit' });
-            document.getElementById('clock1').innerText = "EST Time: " + timeString;
-            document.getElementById('clock2').innerText = "EST Time: " + timeString;
-            document.getElementById('clock3').innerText = "EST Time: " + timeString;
-            document.getElementById('clock4').innerText = "EST Time: " + timeString;
+            ['clock1', 'clock2', 'clock3', 'clock4'].forEach(id => document.getElementById(id).innerText = "EST Time: " + timeString);
         }
     </script>
 </body>
