@@ -18,8 +18,8 @@
         
         /* London & Greece Styles */
         .btn-london { background-color: #384959; color: #BDDDFC; }
-        .btn-greece { background-color: #2E6F40; color: #CFFFDC; }
-        .greece-body { background-color: #CFFFDC !important; }
+        .btn-greece { background-color: #385939; color: #c5fcbd; }
+        .greece-body { background-color: #c5fcbd !important; }
         .rates-body { background-color: #EEEEEE !important; }
         .clear-btn { background-color: #cc0000; color: white; margin-top: 20px; }
 
@@ -29,9 +29,9 @@
         .tab-btn.active-tab { border-top: 3px solid #FFF; color: #BDDDFC; background: #2a3845; }
         
         /* Tab Bar Theme Variations */
-        .greece-body .tab-bar { background-color: #2E6F40; }
-        .greece-body .tab-btn { color: #87b393; }
-        .greece-body .tab-btn.active-tab { color: #CFFFDC; background: #235832; }
+        .greece-body .tab-bar { background-color: #385939; }
+        .greece-body .tab-btn { color: #82a884; }
+        .greece-body .tab-btn.active-tab { color: #c5fcbd; background: #2d472d; }
         
         .rates-body .tab-bar { background-color: #BBBBBB; }
         .rates-body .tab-btn { color: #777777; }
@@ -119,7 +119,6 @@
             document.getElementById(tabId).style.display = 'block';
             document.getElementById('btn_' + tabId).classList.add('active-tab');
             
-            // Apply themes
             if (tabId === 'greece') document.body.className = 'greece-body';
             else if (tabId === 'rates') document.body.className = 'rates-body';
             else document.body.className = '';
