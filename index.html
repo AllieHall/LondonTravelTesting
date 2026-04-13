@@ -21,7 +21,6 @@
         .greece-body { background-color: #CFFFDC !important; }
         .clear-btn { background-color: #cc0000; color: white; margin-top: 20px; }
 
-        /* Updated Tab Bar */
         .tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; background: #384959; }
         .tab-btn { flex: 1; padding: 15px; background: none; border: none; border-top: 3px solid transparent; font-weight: bold; color: #8096a6; }
         .tab-btn.active-tab { border-top: 3px solid #FFF; color: #BDDDFC; background: #2a3845; }
@@ -33,7 +32,7 @@
         .rate-container { margin-bottom: 25px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
     </style>
 </head>
-<body onload="switchTab('london')">
+<body onload="initApp()">
 
     <div class="content">
         <div id="london" class="tab-content">
@@ -42,6 +41,12 @@
             <button class="btn-london" onclick="convert('london', 'toLocal')">USD to GBP</button>
             <button class="btn-london" onclick="convert('london', 'toUSD')">GBP to USD</button>
             <h3 id="res_london">Result: -</h3>
+            <hr>
+            <h2>Temperature</h2>
+            <input type="number" id="temp" placeholder="Enter Degrees">
+            <button id="temp-btn-1" class="btn-london" onclick="convertTemp('F')">F to C</button>
+            <button id="temp-btn-2" class="btn-london" onclick="convertTemp('C')">C to F</button>
+            <h3 id="tempResult">Result: -</h3>
         </div>
 
         <div id="greece" class="tab-content">
@@ -50,6 +55,12 @@
             <button class="btn-greece" onclick="convert('greece', 'toLocal')">USD to EUR</button>
             <button class="btn-greece" onclick="convert('greece', 'toUSD')">EUR to USD</button>
             <h3 id="res_greece">Result: -</h3>
+            <hr>
+            <h2>Temperature</h2>
+            <input type="number" id="temp_greece" placeholder="Enter Degrees">
+            <button id="temp-btn-3" class="btn-greece" onclick="convertTemp('F')">F to C</button>
+            <button id="temp-btn-4" class="btn-greece" onclick="convertTemp('C')">C to F</button>
+            <h3 id="tempResult_greece">Result: -</h3>
         </div>
 
         <div id="rates" class="tab-content">
@@ -64,18 +75,9 @@
                 <input type="number" id="rate_greece" placeholder="Current Rate" step="0.0001">
                 <button class="btn-greece" onclick="saveRate('greece')">Save Greece Rate</button>
             </div>
+            <p id="clock">EST Time: --:--</p>
+            <button class="clear-btn" onclick="clearAll()">Clear All</button>
         </div>
-
-        <hr>
-
-        <h2>Temperature</h2>
-        <input type="number" id="temp" placeholder="Enter Degrees">
-        <button id="temp-btn-1" class="btn-london" onclick="convertTemp('F')">F to C</button>
-        <button id="temp-btn-2" class="btn-london" onclick="convertTemp('C')">C to F</button>
-        <h3 id="tempResult">Result: -</h3>
-
-        <p id="clock">EST Time: --:--</p>
-        <button class="clear-btn" onclick="clearAll()">Clear All</button>
     </div>
 
     <div class="tab-bar" id="tab-bar">
@@ -86,8 +88,12 @@
 
     <script>
         function initApp() {
-            document.getElementById('rate_london').value = localStorage.getItem('rate_london') || 0.79;
-            document.getElementById('rate_greece').value = localStorage.getItem('rate_greece') || 0.92;
+            // Set defaults if local storage is empty
+            if (!localStorage.getItem('rate_london')) localStorage.setItem('rate_london', 0.79);
+            if (!localStorage.getItem('rate_greece')) localStorage.setItem('rate_greece', 0.92);
+            
+            document.getElementById('rate_london').value = localStorage.getItem('rate_london');
+            document.getElementById('rate_greece').value = localStorage.getItem('rate_greece');
             switchTab('london');
         }
 
@@ -102,16 +108,13 @@
             document.getElementById(tabId).style.display = 'block';
             document.getElementById('btn_' + tabId).classList.add('active-tab');
             
-            const isGreece = (tabId === 'greece');
-            document.body.className = isGreece ? 'greece-body' : '';
-            [document.getElementById('temp-btn-1'), document.getElementById('temp-btn-2')].forEach(b => b.className = isGreece ? 'btn-greece' : 'btn-london');
-            
+            document.body.className = (tabId === 'greece') ? 'greece-body' : '';
             updateClock();
         }
 
         function convert(country, direction) {
             let val = parseFloat(document.getElementById('amt_' + country).value);
-            let rate = parseFloat(localStorage.getItem('rate_' + country) || 1);
+            let rate = parseFloat(localStorage.getItem('rate_' + country));
             let res = document.getElementById('res_' + country);
             const sym = (country === 'london') ? '£' : '€';
             if (isNaN(val)) return;
@@ -119,8 +122,9 @@
         }
 
         function convertTemp(dir) {
-            let val = parseFloat(document.getElementById('temp').value);
-            let res = document.getElementById('tempResult');
+            // Logic updated to work per-tab if needed
+            let val = parseFloat(document.getElementById('temp').value || document.getElementById('temp_greece').value);
+            let res = document.getElementById('tempResult') || document.getElementById('tempResult_greece');
             res.innerText = (dir === 'F') ? ((val - 32) * 5/9).toFixed(1) + "°C" : (val * 9/5 + 32).toFixed(1) + "°F";
         }
 
@@ -133,9 +137,6 @@
             const timeString = new Date().toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: '2-digit', minute: '2-digit' });
             document.getElementById('clock').innerText = "EST Time: " + timeString;
         }
-        
-        // Ensure init runs
-        initApp();
     </script>
 </body>
 </html>
