@@ -28,7 +28,9 @@
         .greece-body .tab-btn { color: #87b393; }
         .greece-body .tab-btn.active-tab { color: #CFFFDC; background: #235832; }
 
-        #clock { font-size: 1.3em; font-weight: bold; margin: 15px 0; color: #333; }
+        /* Unified Clock Style: Italic, normal weight, smaller size */
+        .clock-display { font-size: 1.0em; font-style: italic; font-weight: normal; margin: 15px 0; color: #555; }
+        
         .rate-container { margin-bottom: 25px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
     </style>
 </head>
@@ -47,7 +49,7 @@
             <button id="temp-btn-1" class="btn-london" onclick="convertTemp('F')">F to C</button>
             <button id="temp-btn-2" class="btn-london" onclick="convertTemp('C')">C to F</button>
             <h3 id="tempResult">Result: -</h3>
-            <p id="clock">EST Time: --:--</p>
+            <p id="clock1" class="clock-display">EST Time: --:--</p>
             <button class="clear-btn" onclick="clearAll()">Clear All</button>
         </div>
 
@@ -61,9 +63,9 @@
             <h2>Temperature</h2>
             <input type="number" id="temp_greece" placeholder="Enter Degrees">
             <button id="temp-btn-3" class="btn-greece" onclick="convertTemp('F')">F to C</button>
-            <button id="temp-btn-4" class="btn-greece" onclick="convertTemp('C')">F to F</button>
+            <button id="temp-btn-4" class="btn-greece" onclick="convertTemp('C')">C to F</button>
             <h3 id="tempResult_greece">Result: -</h3>
-            <p id="clock2">EST Time: --:--</p>
+            <p id="clock2" class="clock-display">EST Time: --:--</p>
             <button class="clear-btn" onclick="clearAll()">Clear All</button>
         </div>
 
@@ -95,7 +97,6 @@
             document.getElementById('rate_london').value = localStorage.getItem('rate_london');
             document.getElementById('rate_greece').value = localStorage.getItem('rate_greece');
             
-            // Set up clock refresh
             setInterval(updateClock, 60000);
             updateClock();
             switchTab('london');
@@ -125,8 +126,12 @@
         }
 
         function convertTemp(dir) {
-            let val = parseFloat(document.getElementById('temp').value || document.getElementById('temp_greece').value);
-            let res = document.getElementById('tempResult') || document.getElementById('tempResult_greece');
+            // Updated to handle specific inputs per tab
+            let isGreece = document.body.classList.contains('greece-body');
+            let val = parseFloat(isGreece ? document.getElementById('temp_greece').value : document.getElementById('temp').value);
+            let res = isGreece ? document.getElementById('tempResult_greece') : document.getElementById('tempResult');
+            
+            if (isNaN(val)) return;
             res.innerText = (dir === 'F') ? ((val - 32) * 5/9).toFixed(1) + "°C" : (val * 9/5 + 32).toFixed(1) + "°F";
         }
 
@@ -137,7 +142,7 @@
 
         function updateClock() {
             const timeString = new Date().toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: '2-digit', minute: '2-digit' });
-            document.getElementById('clock').innerText = "EST Time: " + timeString;
+            document.getElementById('clock1').innerText = "EST Time: " + timeString;
             document.getElementById('clock2').innerText = "EST Time: " + timeString;
         }
     </script>
