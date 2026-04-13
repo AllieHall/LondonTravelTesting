@@ -9,38 +9,43 @@
         .content { flex: 1; width: 100%; max-width: 300px; padding-bottom: 90px; }
         .tab-content { display: none; }
         
-        /* Gear Icon */
-        .gear-icon { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 24px; color: #333; }
+        /* Icons */
+        .gear-icon, .close-icon { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 24px; color: #333; }
         
-        input { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border: 1px solid black; border-radius: 4px; box-sizing: border-box; }
-        button { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        /* Universal width for inputs and buttons */
+        input, button, select { width: 100%; max-width: 300px; box-sizing: border-box; }
+        input { padding: 12px; margin: 8px 0; font-size: 16px; border: 1px solid black; border-radius: 4px; }
+        button { padding: 12px; margin: 8px 0; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 16px; }
         
         /* Themed Buttons */
         .btn-london { background-color: #384959; color: #BDDDFC; }
         .btn-canada { background-color: #ff7575; color: #fff2f2; }
-        .btn-spain { background-color: #E6B800; color: #fff2f2; } /* Slightly darker gold */
+        .btn-spain { background-color: #D4AC0D; color: #fff2f2; } /* Darker Gold */
         .btn-greece { background-color: #385939; color: #c9f0cb; }
-        
-        /* Setup Modal/Section */
-        #settings-page { display: none; padding: 20px; background: #fff; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; overflow-y: auto; }
         .btn-setup { background-color: #999999; color: #000000; }
-        select { padding: 10px; width: 100%; margin-top: 10px; background-color: #FFFFFF; color: #000000; border: 1px solid #000; border-radius: 4px; }
+        
+        /* Settings Overlay */
+        #settings-page { display: none; padding: 20px; background: #fff; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; overflow-y: auto; text-align: center; }
+        #settings-page .rate-container { max-width: 300px; margin: 0 auto 25px auto; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+        select { padding: 10px; margin-top: 10px; background-color: #FFFFFF; color: #000000; border: 1px solid #000; border-radius: 4px; }
 
+        /* Body Backgrounds */
         .canada-body { background-color: #fff2f2 !important; }
         .spain-body { background-color: #fff2f2 !important; }
         .greece-body { background-color: #c9f0cb !important; }
         .clear-btn { background-color: #cc0000; color: white; margin-top: 20px; }
 
+        /* Tab Bar Coloring Logic */
         .tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; background: #384959; transition: background 0.3s; }
         .tab-btn { flex: 1; padding: 15px; background: none; border: none; border-top: 3px solid transparent; font-weight: bold; color: #8096a6; }
-        .tab-btn.active-tab { border-top: 3px solid #FFF; color: #BDDDFC; background: #2a3845; }
+        .tab-btn.active-tab { border-top: 3px solid #FFF; color: #FFF; background: rgba(0,0,0,0.2); }
         
+        /* Contextual Tab Bar Colors */
         .canada-body .tab-bar { background-color: #ff7575; }
-        .spain-body .tab-bar { background-color: #E6B800; }
+        .spain-body .tab-bar { background-color: #D4AC0D; }
         .greece-body .tab-bar { background-color: #385939; }
         
         .clock-display { font-size: 1.0em; font-style: italic; font-weight: normal; margin: 15px 0; color: #555; }
-        .rate-container { margin-bottom: 25px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
     </style>
 </head>
 <body onload="initApp()">
@@ -116,8 +121,8 @@
     </div>
 
     <div id="settings-page">
+        <span class="close-icon" onclick="closeSettings()">✕</span>
         <h2>Settings</h2>
-        <button onclick="closeSettings()">Close</button>
         <div class="rate-container">
             <h3>Default Tab</h3>
             <select id="defaultTabSelect">
@@ -145,12 +150,10 @@
             if (!localStorage.getItem('rate_london')) localStorage.setItem('rate_london', 0.74);
             if (!localStorage.getItem('rate_canada')) localStorage.setItem('rate_canada', 1.38);
             if (!localStorage.getItem('rate_euro')) localStorage.setItem('rate_euro', 0.85);
-            
             document.getElementById('rate_london').value = localStorage.getItem('rate_london');
             document.getElementById('rate_canada').value = localStorage.getItem('rate_canada');
             document.getElementById('rate_euro').value = localStorage.getItem('rate_euro');
             document.getElementById('defaultTabSelect').value = localStorage.getItem('preferredTab') || 'london';
-            
             setInterval(updateClock, 60000);
             updateClock();
             switchTab(localStorage.getItem('preferredTab') || 'london');
@@ -160,7 +163,6 @@
         function saveDefaultTab() { localStorage.setItem('preferredTab', document.getElementById('defaultTabSelect').value); alert('Default saved!'); }
         function saveRate(country) { localStorage.setItem('rate_' + country, document.getElementById('rate_' + country).value); alert('Rate saved!'); }
         function saveEuroRate() { localStorage.setItem('rate_euro', document.getElementById('rate_euro').value); alert('Euro rate saved!'); }
-        
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
@@ -169,7 +171,6 @@
             document.body.className = tabId + '-body';
             updateClock();
         }
-        
         function convert(country, direction) {
             let val = parseFloat(document.getElementById('amt_' + country).value);
             let rate = (country === 'spain' || country === 'greece') ? parseFloat(localStorage.getItem('rate_euro')) : parseFloat(localStorage.getItem('rate_' + country));
@@ -178,7 +179,6 @@
             if (isNaN(val)) return;
             res.innerText = (direction === 'toLocal') ? "Result: " + symbols[country] + (val * rate).toFixed(2) : "Result: $" + (val / rate).toFixed(2);
         }
-        
         function convertTemp(dir) {
             let bodyClass = document.body.className;
             let val, res;
@@ -192,7 +192,10 @@
         function clearAll() { document.querySelectorAll('input[type="number"]:not([id^="rate_"])').forEach(i => i.value = ""); document.querySelectorAll('h3').forEach(h => h.innerText = "Result: -"); }
         function updateClock() {
             const timeString = new Date().toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: '2-digit', minute: '2-digit' });
-            ['clock1', 'clock2', 'clock3', 'clock4'].forEach(id => document.getElementById(id).innerText = "EST Time: " + timeString);
+            ['clock1', 'clock2', 'clock3', 'clock4'].forEach(id => {
+                let el = document.getElementById(id);
+                if (el) el.innerText = "EST Time: " + timeString;
+            });
         }
     </script>
 </body>
