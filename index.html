@@ -21,7 +21,7 @@
         .greece-body { background-color: #CFFFDC !important; }
         .clear-btn { background-color: #cc0000; color: white; margin-top: 20px; }
 
-        /* Updated Tab Bar Colors */
+        /* Updated Tab Bar */
         .tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; background: #384959; }
         .tab-btn { flex: 1; padding: 15px; background: none; border: none; border-top: 3px solid transparent; font-weight: bold; color: #8096a6; }
         .tab-btn.active-tab { border-top: 3px solid #FFF; color: #BDDDFC; background: #2a3845; }
@@ -30,18 +30,14 @@
         .greece-body .tab-btn.active-tab { color: #CFFFDC; background: #235832; }
 
         #clock { font-size: 1.3em; font-weight: bold; margin: 15px 0; color: #333; }
-        .rate-box { font-size: 0.9em; margin-bottom: 10px; }
+        .rate-container { margin-bottom: 25px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
     </style>
 </head>
-<body onload="initApp()">
+<body onload="switchTab('london')">
 
     <div class="content">
         <div id="london" class="tab-content">
             <h2>London (GBP)</h2>
-            <div class="rate-box">
-                <input type="number" id="rate_london" placeholder="Enter Rate (e.g. 0.79)" step="0.0001">
-                <button class="btn-london" onclick="saveRate('london')">Save Rate</button>
-            </div>
             <input type="number" id="amt_london" placeholder="Enter Amount">
             <button class="btn-london" onclick="convert('london', 'toLocal')">USD to GBP</button>
             <button class="btn-london" onclick="convert('london', 'toUSD')">GBP to USD</button>
@@ -50,14 +46,24 @@
 
         <div id="greece" class="tab-content">
             <h2>Greece (EUR)</h2>
-            <div class="rate-box">
-                <input type="number" id="rate_greece" placeholder="Enter Rate (e.g. 0.92)" step="0.0001">
-                <button class="btn-greece" onclick="saveRate('greece')">Save Rate</button>
-            </div>
             <input type="number" id="amt_greece" placeholder="Enter Amount">
             <button class="btn-greece" onclick="convert('greece', 'toLocal')">USD to EUR</button>
             <button class="btn-greece" onclick="convert('greece', 'toUSD')">EUR to USD</button>
             <h3 id="res_greece">Result: -</h3>
+        </div>
+
+        <div id="rates" class="tab-content">
+            <h2>Set Rates</h2>
+            <div class="rate-container">
+                <h3>London (USD to GBP)</h3>
+                <input type="number" id="rate_london" placeholder="Current Rate" step="0.0001">
+                <button class="btn-london" onclick="saveRate('london')">Save London Rate</button>
+            </div>
+            <div class="rate-container">
+                <h3>Greece (USD to EUR)</h3>
+                <input type="number" id="rate_greece" placeholder="Current Rate" step="0.0001">
+                <button class="btn-greece" onclick="saveRate('greece')">Save Greece Rate</button>
+            </div>
         </div>
 
         <hr>
@@ -75,19 +81,18 @@
     <div class="tab-bar" id="tab-bar">
         <button class="tab-btn" id="btn_london" onclick="switchTab('london')">London</button>
         <button class="tab-btn" id="btn_greece" onclick="switchTab('greece')">Greece</button>
+        <button class="tab-btn" id="btn_rates" onclick="switchTab('rates')">Rates</button>
     </div>
 
     <script>
         function initApp() {
-            // Load saved rates
             document.getElementById('rate_london').value = localStorage.getItem('rate_london') || 0.79;
             document.getElementById('rate_greece').value = localStorage.getItem('rate_greece') || 0.92;
             switchTab('london');
         }
 
         function saveRate(country) {
-            let val = document.getElementById('rate_' + country).value;
-            localStorage.setItem('rate_' + country, val);
+            localStorage.setItem('rate_' + country, document.getElementById('rate_' + country).value);
             alert('Rate saved for ' + country + '!');
         }
 
@@ -106,11 +111,10 @@
 
         function convert(country, direction) {
             let val = parseFloat(document.getElementById('amt_' + country).value);
-            let rate = parseFloat(document.getElementById('rate_' + country).value);
+            let rate = parseFloat(localStorage.getItem('rate_' + country) || 1);
             let res = document.getElementById('res_' + country);
             const sym = (country === 'london') ? '£' : '€';
-            
-            if (isNaN(val) || isNaN(rate)) return;
+            if (isNaN(val)) return;
             res.innerText = (direction === 'toLocal') ? "Result: " + sym + (val * rate).toFixed(2) : "Result: $" + (val / rate).toFixed(2);
         }
 
@@ -127,8 +131,4 @@
 
         function updateClock() {
             const timeString = new Date().toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: '2-digit', minute: '2-digit' });
-            document.getElementById('clock').innerText = "EST Time: " + timeString;
-        }
-    </script>
-</body>
-</html>
+            document.getElementById('clock').
