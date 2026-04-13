@@ -9,13 +9,12 @@
         .content { flex: 1; width: 100%; max-width: 300px; padding-bottom: 90px; }
         .tab-content { display: none; }
         
-        /* Icons - Perfectly aligned */
-        .gear-icon, .close-icon { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 24px; color: #333; z-index: 200; }
+        .gear-icon { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 24px; color: #333; z-index: 50; }
         
-        /* Universal width for inputs and buttons */
-        input, button, select { width: 100%; max-width: 300px; box-sizing: border-box; }
-        input { padding: 12px; margin: 8px 0; font-size: 16px; border: 1px solid black; border-radius: 4px; }
-        button { padding: 12px; margin: 8px 0; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        /* Layout */
+        input, button, select { width: 100%; max-width: 300px; box-sizing: border-box; display: block; margin: 8px auto; }
+        input { padding: 12px; font-size: 16px; border: 1px solid black; border-radius: 4px; }
+        button { padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 16px; }
         
         /* Themed Buttons */
         .btn-london { background-color: #384959; color: #BDDDFC; }
@@ -23,31 +22,32 @@
         .btn-spain { background-color: #D4AC0D; color: #fff2f2; }
         .btn-greece { background-color: #385939; color: #c9f0cb; }
         .btn-setup { background-color: #999999; color: #000000; }
+        .btn-close { background-color: #DDDDDD; color: #000000; width: 50% !important; }
         
         /* Settings Overlay */
-        #settings-page { display: none; padding: 60px 20px 20px 20px; background: #fff; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; overflow-y: auto; text-align: center; }
-        #settings-page .rate-container { max-width: 300px; margin: 0 auto 25px auto; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
-        select { padding: 10px; margin-top: 10px; background-color: #FFFFFF; color: #000000; border: 1px solid #000; border-radius: 4px; }
+        #settings-page { display: none; padding: 20px; background: #BDDDFC; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; overflow-y: auto; text-align: center; }
+        .rate-container { max-width: 300px; margin: 0 auto 25px auto; border-bottom: 1px solid #aaa; padding-bottom: 10px; }
+        select { padding: 10px; background-color: #FFFFFF; color: #000000; border: 1px solid #000; border-radius: 4px; }
 
-        /* Body Backgrounds */
-        .canada-body { background-color: #fff2f2 !important; }
-        .spain-body { background-color: #fff2f2 !important; }
+        /* Body Themes */
+        .canada-body, .spain-body { background-color: #fff2f2 !important; }
         .greece-body { background-color: #c9f0cb !important; }
         .clear-btn { background-color: #cc0000; color: white; margin-top: 20px; }
 
-        /* Tab Bar Coloring Logic */
-        .tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; background: #384959; transition: background 0.3s; }
-        .tab-btn { flex: 1; padding: 15px; background: none; border: none; border-top: 3px solid transparent; font-weight: bold; font-size: 12px; }
+        /* Tab Bar Styling */
+        .tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; background: #384959; z-index: 50; }
+        .tab-btn { flex: 1; padding: 15px; background: none; border: none; border-top: 3px solid transparent; font-weight: bold; font-size: 12px; transition: 0.2s; }
         
-        /* Active/Inactive States */
+        /* Inactive Colors */
         #btn_london { color: #BDDDFC; }
         #btn_canada { color: #ff7575; }
         #btn_spain { color: #D4AC0D; }
         #btn_greece { color: #82a884; }
+        
+        /* Active Tab Color */
         .tab-btn.active-tab { border-top: 3px solid #FFF; color: #FFF !important; background: rgba(0,0,0,0.2); }
         
-        .canada-body .tab-bar { background-color: #ff7575; }
-        .spain-body .tab-bar { background-color: #D4AC0D; }
+        .canada-body .tab-bar, .spain-body .tab-bar { background-color: #ff7575; }
         .greece-body .tab-bar { background-color: #385939; }
         
         .clock-display { font-size: 1.0em; font-style: italic; font-weight: normal; margin: 15px 0; color: #555; }
@@ -63,12 +63,12 @@
     </div>
 
     <div id="settings-page">
-        <span class="close-icon" onclick="closeSettings()">✕</span>
+        <button class="btn-close" onclick="closeSettings()">Close</button>
         <h2>Settings</h2>
         <div class="rate-container"><h3>Default Tab</h3><select id="defaultTabSelect"><option value="london">London</option><option value="canada">Canada</option><option value="spain">Spain</option><option value="greece">Greece</option></select><button class="btn-setup" onclick="saveDefaultTab()">Save Default Tab</button></div>
-        <div class="rate-container"><h3>London (USD to GBP)</h3><input type="number" id="rate_london" step="0.0001"><button class="btn-london" onclick="saveRate('london')">Save London Rate</button></div>
-        <div class="rate-container"><h3>Canada (USD to CAD)</h3><input type="number" id="rate_canada" step="0.0001"><button class="btn-canada" onclick="saveRate('canada')">Save Canada Rate</button></div>
-        <div class="rate-container"><h3>Spain/Greece (USD to EUR)</h3><input type="number" id="rate_euro" step="0.0001"><button class="btn-spain" onclick="saveEuroRate()">Save EUR Rate</button></div>
+        <div class="rate-container"><h3>London Rate</h3><input type="number" id="rate_london" step="0.0001"><button class="btn-london" onclick="saveRate('london')">Save London</button></div>
+        <div class="rate-container"><h3>Canada Rate</h3><input type="number" id="rate_canada" step="0.0001"><button class="btn-canada" onclick="saveRate('canada')">Save Canada</button></div>
+        <div class="rate-container"><h3>Spain/Greece Rate</h3><input type="number" id="rate_euro" step="0.0001"><button class="btn-spain" onclick="saveEuroRate()">Save EUR</button></div>
     </div>
 
     <div class="tab-bar" id="tab-bar">
