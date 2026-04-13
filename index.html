@@ -131,4 +131,11 @@
 
         function updateClock() {
             const timeString = new Date().toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: '2-digit', minute: '2-digit' });
-            document.getElementById('clock').
+            document.getElementById('clock').innerText = "EST Time: " + timeString;
+        }
+        
+        // Ensure init runs
+        initApp();
+    </script>
+</body>
+</html>
