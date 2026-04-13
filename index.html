@@ -11,24 +11,22 @@
         
         .gear-icon { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 24px; color: #333; z-index: 50; }
         
-        /* Layout */
-        input, button, select { width: 100%; max-width: 300px; box-sizing: border-box; display: block; margin: 8px auto; }
+        /* Centered Inputs/Buttons */
+        input, button, select { width: 100%; max-width: 300px; box-sizing: border-box; display: block; margin: 8px auto; text-align: center; }
         input { padding: 12px; font-size: 16px; border: 1px solid black; border-radius: 4px; }
         button { padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 16px; }
         
-        /* Themed Buttons */
         .btn-london { background-color: #384959; color: #BDDDFC; }
         .btn-canada { background-color: #ff7575; color: #fff2f2; }
         .btn-spain { background-color: #D4AC0D; color: #fff2f2; }
         .btn-greece { background-color: #385939; color: #c9f0cb; }
         .btn-setup { background-color: #999999; color: #000000; }
-        .btn-close { background-color: #DDDDDD; color: #000000; width: 50% !important; }
+        .btn-close { background-color: #AAAAAA; color: #000000; width: 50% !important; margin: 20px auto; }
         
-        /* Settings Overlay */
-        #settings-page { display: none; padding: 20px; background: #BDDDFC; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; overflow-y: auto; text-align: center; }
+        /* Settings Overlay: Pure White Background */
+        #settings-page { display: none; padding: 20px; background: #FFFFFF; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; overflow-y: auto; text-align: center; }
         .rate-container { max-width: 300px; margin: 0 auto 25px auto; border-bottom: 1px solid #aaa; padding-bottom: 10px; }
-        select { padding: 10px; background-color: #FFFFFF; color: #000000; border: 1px solid #000; border-radius: 4px; }
-
+        
         /* Body Themes */
         .canada-body, .spain-body { background-color: #fff2f2 !important; }
         .greece-body { background-color: #c9f0cb !important; }
@@ -36,19 +34,21 @@
 
         /* Tab Bar Styling */
         .tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; background: #384959; z-index: 50; }
-        .tab-btn { flex: 1; padding: 15px; background: none; border: none; border-top: 3px solid transparent; font-weight: bold; font-size: 12px; transition: 0.2s; }
+        .tab-btn { flex: 1; padding: 15px; background: none; border: none; border-top: 3px solid transparent; font-weight: bold; font-size: 11px; transition: 0.2s; }
         
-        /* Inactive Colors */
-        #btn_london { color: #BDDDFC; }
-        #btn_canada { color: #ff7575; }
-        #btn_spain { color: #D4AC0D; }
-        #btn_greece { color: #82a884; }
+        /* Inactive Tab Text Colors */
+        .tab-btn { color: #8096a6; } /* Default */
         
         /* Active Tab Color */
         .tab-btn.active-tab { border-top: 3px solid #FFF; color: #FFF !important; background: rgba(0,0,0,0.2); }
         
-        .canada-body .tab-bar, .spain-body .tab-bar { background-color: #ff7575; }
+        /* Theme Bar Logic */
+        .canada-body .tab-bar { background-color: #ff7575; }
+        .canada-body .tab-btn { color: #fff2f2; }
+        .spain-body .tab-bar { background-color: #D4AC0D; }
+        .spain-body .tab-btn { color: #fff2f2; }
         .greece-body .tab-bar { background-color: #385939; }
+        .greece-body .tab-btn { color: #c9f0cb; }
         
         .clock-display { font-size: 1.0em; font-style: italic; font-weight: normal; margin: 15px 0; color: #555; }
     </style>
