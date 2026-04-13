@@ -16,21 +16,28 @@
         input { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border: 1px solid black; border-radius: 4px; box-sizing: border-box; }
         button { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
         
+        /* London & Greece Styles */
         .btn-london { background-color: #384959; color: #BDDDFC; }
         .btn-greece { background-color: #2E6F40; color: #CFFFDC; }
         .greece-body { background-color: #CFFFDC !important; }
+        .rates-body { background-color: #EEEEEE !important; }
         .clear-btn { background-color: #cc0000; color: white; margin-top: 20px; }
 
-        .tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; background: #384959; }
+        /* Tab Bar */
+        .tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; background: #384959; transition: background 0.3s; }
         .tab-btn { flex: 1; padding: 15px; background: none; border: none; border-top: 3px solid transparent; font-weight: bold; color: #8096a6; }
         .tab-btn.active-tab { border-top: 3px solid #FFF; color: #BDDDFC; background: #2a3845; }
+        
+        /* Tab Bar Theme Variations */
         .greece-body .tab-bar { background-color: #2E6F40; }
         .greece-body .tab-btn { color: #87b393; }
         .greece-body .tab-btn.active-tab { color: #CFFFDC; background: #235832; }
-
-        /* Unified Clock Style: Italic, normal weight, smaller size */
-        .clock-display { font-size: 1.0em; font-style: italic; font-weight: normal; margin: 15px 0; color: #555; }
         
+        .rates-body .tab-bar { background-color: #BBBBBB; }
+        .rates-body .tab-btn { color: #777777; }
+        .rates-body .tab-btn.active-tab { color: #333333; background: #AAAAAA; }
+
+        .clock-display { font-size: 1.0em; font-style: italic; font-weight: normal; margin: 15px 0; color: #555; }
         .rate-container { margin-bottom: 25px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
     </style>
 </head>
@@ -96,7 +103,6 @@
             if (!localStorage.getItem('rate_greece')) localStorage.setItem('rate_greece', 0.92);
             document.getElementById('rate_london').value = localStorage.getItem('rate_london');
             document.getElementById('rate_greece').value = localStorage.getItem('rate_greece');
-            
             setInterval(updateClock, 60000);
             updateClock();
             switchTab('london');
@@ -104,7 +110,7 @@
 
         function saveRate(country) {
             localStorage.setItem('rate_' + country, document.getElementById('rate_' + country).value);
-            alert('Rate saved for ' + country + '!');
+            alert('Rate saved!');
         }
 
         function switchTab(tabId) {
@@ -112,7 +118,12 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
             document.getElementById(tabId).style.display = 'block';
             document.getElementById('btn_' + tabId).classList.add('active-tab');
-            document.body.className = (tabId === 'greece') ? 'greece-body' : '';
+            
+            // Apply themes
+            if (tabId === 'greece') document.body.className = 'greece-body';
+            else if (tabId === 'rates') document.body.className = 'rates-body';
+            else document.body.className = '';
+            
             updateClock();
         }
 
@@ -126,11 +137,9 @@
         }
 
         function convertTemp(dir) {
-            // Updated to handle specific inputs per tab
             let isGreece = document.body.classList.contains('greece-body');
             let val = parseFloat(isGreece ? document.getElementById('temp_greece').value : document.getElementById('temp').value);
             let res = isGreece ? document.getElementById('tempResult_greece') : document.getElementById('tempResult');
-            
             if (isNaN(val)) return;
             res.innerText = (dir === 'F') ? ((val - 32) * 5/9).toFixed(1) + "°C" : (val * 9/5 + 32).toFixed(1) + "°F";
         }
