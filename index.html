@@ -16,9 +16,13 @@
         input { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border: 1px solid black; border-radius: 4px; box-sizing: border-box; }
         button { padding: 12px; margin: 8px 0; width: 100%; font-size: 16px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
         
-        /* London & Greece Styles */
+        /* Themed Buttons */
         .btn-london { background-color: #384959; color: #BDDDFC; }
+        .btn-canada { background-color: #ff7575; color: #fff2f2; }
         .btn-greece { background-color: #385939; color: #c9f0cb; }
+        
+        /* Body Backgrounds */
+        .canada-body { background-color: #fff2f2 !important; }
         .greece-body { background-color: #c9f0cb !important; }
         .rates-body { background-color: #EEEEEE !important; }
         .clear-btn { background-color: #cc0000; color: white; margin-top: 20px; }
@@ -28,7 +32,11 @@
         .tab-btn { flex: 1; padding: 15px; background: none; border: none; border-top: 3px solid transparent; font-weight: bold; color: #8096a6; }
         .tab-btn.active-tab { border-top: 3px solid #FFF; color: #BDDDFC; background: #2a3845; }
         
-        /* Tab Bar Theme Variations */
+        /* Theme Variations */
+        .canada-body .tab-bar { background-color: #ff7575; }
+        .canada-body .tab-btn { color: #fcc9c9; }
+        .canada-body .tab-btn.active-tab { color: #fff2f2; background: #e66969; }
+        
         .greece-body .tab-bar { background-color: #385939; }
         .greece-body .tab-btn { color: #82a884; }
         .greece-body .tab-btn.active-tab { color: #c9f0cb; background: #2d472d; }
@@ -60,6 +68,22 @@
             <button class="clear-btn" onclick="clearAll()">Clear All</button>
         </div>
 
+        <div id="canada" class="tab-content">
+            <h2>Canada (CAD)</h2>
+            <input type="number" id="amt_canada" placeholder="Enter Amount">
+            <button class="btn-canada" onclick="convert('canada', 'toLocal')">USD to CAD</button>
+            <button class="btn-canada" onclick="convert('canada', 'toUSD')">CAD to USD</button>
+            <h3 id="res_canada">Result: -</h3>
+            <hr>
+            <h2>Temperature</h2>
+            <input type="number" id="temp_canada" placeholder="Enter Degrees">
+            <button id="temp-btn-5" class="btn-canada" onclick="convertTemp('F')">F to C</button>
+            <button id="temp-btn-6" class="btn-canada" onclick="convertTemp('C')">C to F</button>
+            <h3 id="tempResult_canada">Result: -</h3>
+            <p id="clock3" class="clock-display">EST Time: --:--</p>
+            <button class="clear-btn" onclick="clearAll()">Clear All</button>
+        </div>
+
         <div id="greece" class="tab-content">
             <h2>Greece (EUR)</h2>
             <input type="number" id="amt_greece" placeholder="Enter Amount">
@@ -84,6 +108,11 @@
                 <button class="btn-london" onclick="saveRate('london')">Save London Rate</button>
             </div>
             <div class="rate-container">
+                <h3>Canada (USD to CAD)</h3>
+                <input type="number" id="rate_canada" placeholder="Current Rate" step="0.0001">
+                <button class="btn-canada" onclick="saveRate('canada')">Save Canada Rate</button>
+            </div>
+            <div class="rate-container">
                 <h3>Greece (USD to EUR)</h3>
                 <input type="number" id="rate_greece" placeholder="Current Rate" step="0.0001">
                 <button class="btn-greece" onclick="saveRate('greece')">Save Greece Rate</button>
@@ -93,6 +122,7 @@
 
     <div class="tab-bar" id="tab-bar">
         <button class="tab-btn" id="btn_london" onclick="switchTab('london')">London</button>
+        <button class="tab-btn" id="btn_canada" onclick="switchTab('canada')">Canada</button>
         <button class="tab-btn" id="btn_greece" onclick="switchTab('greece')">Greece</button>
         <button class="tab-btn" id="btn_rates" onclick="switchTab('rates')">Rates</button>
     </div>
@@ -100,9 +130,13 @@
     <script>
         function initApp() {
             if (!localStorage.getItem('rate_london')) localStorage.setItem('rate_london', 0.79);
+            if (!localStorage.getItem('rate_canada')) localStorage.setItem('rate_canada', 1.35);
             if (!localStorage.getItem('rate_greece')) localStorage.setItem('rate_greece', 0.92);
+            
             document.getElementById('rate_london').value = localStorage.getItem('rate_london');
+            document.getElementById('rate_canada').value = localStorage.getItem('rate_canada');
             document.getElementById('rate_greece').value = localStorage.getItem('rate_greece');
+            
             setInterval(updateClock, 60000);
             updateClock();
             switchTab('london');
@@ -119,7 +153,8 @@
             document.getElementById(tabId).style.display = 'block';
             document.getElementById('btn_' + tabId).classList.add('active-tab');
             
-            if (tabId === 'greece') document.body.className = 'greece-body';
+            if (tabId === 'canada') document.body.className = 'canada-body';
+            else if (tabId === 'greece') document.body.className = 'greece-body';
             else if (tabId === 'rates') document.body.className = 'rates-body';
             else document.body.className = '';
             
@@ -130,15 +165,26 @@
             let val = parseFloat(document.getElementById('amt_' + country).value);
             let rate = parseFloat(localStorage.getItem('rate_' + country));
             let res = document.getElementById('res_' + country);
-            const sym = (country === 'london') ? '£' : '€';
+            const symbols = { 'london': '£', 'canada': 'C$', 'greece': '€' };
+            const sym = symbols[country];
+            
             if (isNaN(val)) return;
             res.innerText = (direction === 'toLocal') ? "Result: " + sym + (val * rate).toFixed(2) : "Result: $" + (val / rate).toFixed(2);
         }
 
         function convertTemp(dir) {
-            let isGreece = document.body.classList.contains('greece-body');
-            let val = parseFloat(isGreece ? document.getElementById('temp_greece').value : document.getElementById('temp').value);
-            let res = isGreece ? document.getElementById('tempResult_greece') : document.getElementById('tempResult');
+            let bodyClass = document.body.className;
+            let val, res;
+            if (bodyClass.includes('canada-body')) {
+                val = parseFloat(document.getElementById('temp_canada').value);
+                res = document.getElementById('tempResult_canada');
+            } else if (bodyClass.includes('greece-body')) {
+                val = parseFloat(document.getElementById('temp_greece').value);
+                res = document.getElementById('tempResult_greece');
+            } else {
+                val = parseFloat(document.getElementById('temp').value);
+                res = document.getElementById('tempResult');
+            }
             if (isNaN(val)) return;
             res.innerText = (dir === 'F') ? ((val - 32) * 5/9).toFixed(1) + "°C" : (val * 9/5 + 32).toFixed(1) + "°F";
         }
@@ -152,6 +198,7 @@
             const timeString = new Date().toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: '2-digit', minute: '2-digit' });
             document.getElementById('clock1').innerText = "EST Time: " + timeString;
             document.getElementById('clock2').innerText = "EST Time: " + timeString;
+            document.getElementById('clock3').innerText = "EST Time: " + timeString;
         }
     </script>
 </body>
