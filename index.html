@@ -1,74 +1,299 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Converter App</title>
     <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; background-color: #BDDDFC; align-items: center; text-align: center; transition: background-color 0.3s; }
-        .content { flex: 1; width: 100%; max-width: 300px; padding-bottom: 90px; }
-        .tab-content { display: none; }
-        
-        .gear-icon { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 24px; color: #333; z-index: 50; }
-        
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #BDDDFC;
+            align-items: center;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .content {
+            flex: 1;
+            width: 100%;
+            max-width: 300px;
+            padding-bottom: 90px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .gear-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 24px;
+            color: #333;
+            z-index: 50;
+        }
+
         /* Centered Inputs/Buttons */
-        input, button, select { width: 100%; max-width: 300px; box-sizing: border-box; display: block; margin: 8px auto; text-align: center; }
-        input { padding: 12px; font-size: 16px; border: 1px solid black; border-radius: 4px; }
-        button { padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 16px; }
-        
-        .btn-london { background-color: #384959; color: #BDDDFC; }
-        .btn-canada { background-color: #ff7575; color: #fff2f2; }
-        .btn-spain { background-color: #D4AC0D; color: #fff2f2; }
-        .btn-greece { background-color: #385939; color: #c9f0cb; }
-        .btn-setup { background-color: #999999; color: #000000; }
-        .btn-close { background-color: #cbc6c6; color: #000000; width: 50% !important; margin: 20px auto; }
-        
+        input,
+        button,
+        select {
+            width: 100%;
+            max-width: 300px;
+            box-sizing: border-box;
+            display: block;
+            margin: 8px auto;
+            text-align: center;
+        }
+
+        input {
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid black;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-london {
+            background-color: #384959;
+            color: #BDDDFC;
+        }
+
+        .btn-canada {
+            background-color: #ff7575;
+            color: #fff2f2;
+        }
+
+        .btn-spain {
+            background-color: #D4AC0D;
+            color: #fff2f2;
+        }
+
+        .btn-greece {
+            background-color: #385939;
+            color: #c9f0cb;
+        }
+
+        .btn-setup {
+            background-color: #999999;
+            color: #000000;
+        }
+
+        .btn-close {
+            background-color: #cbc6c6;
+            color: #000000;
+            width: 50% !important;
+            margin: 20px auto;
+        }
+
         /* Settings Overlay: Pure White Background */
-        #settings-page { display: none; padding: 20px; background: #FFFFFF; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; overflow-y: auto; text-align: center; }
-        .rate-container { max-width: 300px; margin: 0 auto 25px auto; border-bottom: 1px solid #aaa; padding-bottom: 10px; }
-        
+        #settings-page {
+            display: none;
+            padding: 20px;
+            background: #FFFFFF;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            overflow-y: auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Centers content horizontally */
+        }
+
+        .rate-container {
+            max-width: 300px;
+            margin: 0 auto 25px auto;
+            border-bottom: 1px solid #aaa;
+            padding-bottom: 10px;
+        }
+
         /* Body Themes */
-        .canada-body, .spain-body { background-color: #fff2f2 !important; }
-        .greece-body { background-color: #c9f0cb !important; }
-        .clear-btn { background-color: #cc0000; color: white; margin-top: 20px; }
+        .canada-body,
+        .spain-body {
+            background-color: #fff2f2 !important;
+        }
+
+        .greece-body {
+            background-color: #c9f0cb !important;
+        }
+
+        .clear-btn {
+            background-color: #cc0000;
+            color: white;
+            margin-top: 20px;
+        }
 
         /* Tab Bar Styling */
-        .tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; background: #384959; z-index: 50; }
-        .tab-btn { flex: 1; padding: 15px; background: none; border: none; border-top: 3px solid transparent; font-weight: bold; font-size: 11px; transition: 0.2s; }
-        
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            background: #384959;
+            z-index: 50;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            border-top: 3px solid transparent;
+            font-weight: bold;
+            font-size: 11px;
+            transition: 0.2s;
+        }
+
         /* Inactive Tab Text Colors */
-        .tab-btn { color: #8096a6; } /* Default */
-        
+        .tab-btn {
+            color: #8096a6;
+        }
+
+        /* Default */
+
         /* Active Tab Color */
-        .tab-btn.active-tab { border-top: 3px solid #FFF; color: #FFF !important; background: rgba(0,0,0,0.2); }
-        
+        .tab-btn.active-tab {
+            border-top: 3px solid #FFF;
+            color: #FFF !important;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
         /* Theme Bar Logic */
-        .canada-body .tab-bar { background-color: #ff7575; }
-        .canada-body .tab-btn { color: #fff2f2; }
-        .spain-body .tab-bar { background-color: #D4AC0D; }
-        .spain-body .tab-btn { color: #fff2f2; }
-        .greece-body .tab-bar { background-color: #385939; }
-        .greece-body .tab-btn { color: #c9f0cb; }
-        
-        .clock-display { font-size: 1.0em; font-style: italic; font-weight: normal; margin: 15px 0; color: #555; }
+        .canada-body .tab-bar {
+            background-color: #ff7575;
+        }
+
+        .canada-body .tab-btn {
+            color: #fff2f2;
+        }
+
+        .spain-body .tab-bar {
+            background-color: #D4AC0D;
+        }
+
+        .spain-body .tab-btn {
+            color: #fff2f2;
+        }
+
+        .greece-body .tab-bar {
+            background-color: #385939;
+        }
+
+        .greece-body .tab-btn {
+            color: #c9f0cb;
+        }
+
+        .clock-display {
+            font-size: 1.0em;
+            font-style: italic;
+            font-weight: normal;
+            margin: 15px 0;
+            color: #555;
+        }
     </style>
 </head>
+
 <body onload="initApp()">
 
     <div class="content">
-        <div id="london" class="tab-content"><span class="gear-icon" onclick="openSettings()">⚙️</span><h2>London (GBP)</h2><input type="number" id="amt_london" placeholder="Enter Amount"><button class="btn-london" onclick="convert('london', 'toLocal')">USD to GBP</button><button class="btn-london" onclick="convert('london', 'toUSD')">GBP to USD</button><h3 id="res_london">Result: -</h3><hr><h2>Temperature</h2><input type="number" id="temp" placeholder="Enter Degrees"><button class="btn-london" onclick="convertTemp('F')">F to C</button><button class="btn-london" onclick="convertTemp('C')">C to F</button><h3 id="tempResult">Result: -</h3><p id="clock1" class="clock-display">EST Time: --:--</p><button class="clear-btn" onclick="clearAll()">Clear All</button></div>
-        <div id="canada" class="tab-content"><span class="gear-icon" onclick="openSettings()">⚙️</span><h2>Canada (CAD)</h2><input type="number" id="amt_canada" placeholder="Enter Amount"><button class="btn-canada" onclick="convert('canada', 'toLocal')">USD to CAD</button><button class="btn-canada" onclick="convert('canada', 'toUSD')">CAD to USD</button><h3 id="res_canada">Result: -</h3><hr><h2>Temperature</h2><input type="number" id="temp_canada" placeholder="Enter Degrees"><button class="btn-canada" onclick="convertTemp('F')">F to C</button><button class="btn-canada" onclick="convertTemp('C')">C to F</button><h3 id="tempResult_canada">Result: -</h3><p id="clock3" class="clock-display">EST Time: --:--</p><button class="clear-btn" onclick="clearAll()">Clear All</button></div>
-        <div id="spain" class="tab-content"><span class="gear-icon" onclick="openSettings()">⚙️</span><h2>Spain (EUR)</h2><input type="number" id="amt_spain" placeholder="Enter Amount"><button class="btn-spain" onclick="convert('spain', 'toLocal')">USD to EUR</button><button class="btn-spain" onclick="convert('spain', 'toUSD')">EUR to USD</button><h3 id="res_spain">Result: -</h3><hr><h2>Temperature</h2><input type="number" id="temp_spain" placeholder="Enter Degrees"><button class="btn-spain" onclick="convertTemp('F')">F to C</button><button class="btn-spain" onclick="convertTemp('C')">C to F</button><h3 id="tempResult_spain">Result: -</h3><p id="clock4" class="clock-display">EST Time: --:--</p><button class="clear-btn" onclick="clearAll()">Clear All</button></div>
-        <div id="greece" class="tab-content"><span class="gear-icon" onclick="openSettings()">⚙️</span><h2>Greece (EUR)</h2><input type="number" id="amt_greece" placeholder="Enter Amount"><button class="btn-greece" onclick="convert('greece', 'toLocal')">USD to EUR</button><button class="btn-greece" onclick="convert('greece', 'toUSD')">EUR to USD</button><h3 id="res_greece">Result: -</h3><hr><h2>Temperature</h2><input type="number" id="temp_greece" placeholder="Enter Degrees"><button class="btn-greece" onclick="convertTemp('F')">F to C</button><button class="btn-greece" onclick="convertTemp('C')">C to F</button><h3 id="tempResult_greece">Result: -</h3><p id="clock2" class="clock-display">EST Time: --:--</p><button class="clear-btn" onclick="clearAll()">Clear All</button></div>
+        <div id="london" class="tab-content"><span class="gear-icon" onclick="openSettings()">⚙️</span>
+            <h2>London (GBP)</h2><input type="number" id="amt_london" placeholder="Enter Amount"><button
+                class="btn-london" onclick="convert('london', 'toLocal')">USD to GBP</button><button class="btn-london"
+                onclick="convert('london', 'toUSD')">GBP to USD</button>
+            <h3 id="res_london">Result: -</h3>
+            <hr>
+            <h2>Temperature</h2><input type="number" id="temp" placeholder="Enter Degrees"><button class="btn-london"
+                onclick="convertTemp('F')">F to C</button><button class="btn-london" onclick="convertTemp('C')">C to
+                F</button>
+            <h3 id="tempResult">Result: -</h3>
+            <p id="clock1" class="clock-display">EST Time: --:--</p><button class="clear-btn" onclick="clearAll()">Clear
+                All</button>
+        </div>
+        <div id="canada" class="tab-content"><span class="gear-icon" onclick="openSettings()">⚙️</span>
+            <h2>Canada (CAD)</h2><input type="number" id="amt_canada" placeholder="Enter Amount"><button
+                class="btn-canada" onclick="convert('canada', 'toLocal')">USD to CAD</button><button class="btn-canada"
+                onclick="convert('canada', 'toUSD')">CAD to USD</button>
+            <h3 id="res_canada">Result: -</h3>
+            <hr>
+            <h2>Temperature</h2><input type="number" id="temp_canada" placeholder="Enter Degrees"><button
+                class="btn-canada" onclick="convertTemp('F')">F to C</button><button class="btn-canada"
+                onclick="convertTemp('C')">C to F</button>
+            <h3 id="tempResult_canada">Result: -</h3>
+            <p id="clock3" class="clock-display">EST Time: --:--</p><button class="clear-btn" onclick="clearAll()">Clear
+                All</button>
+        </div>
+        <div id="spain" class="tab-content"><span class="gear-icon" onclick="openSettings()">⚙️</span>
+            <h2>Spain (EUR)</h2><input type="number" id="amt_spain" placeholder="Enter Amount"><button class="btn-spain"
+                onclick="convert('spain', 'toLocal')">USD to EUR</button><button class="btn-spain"
+                onclick="convert('spain', 'toUSD')">EUR to USD</button>
+            <h3 id="res_spain">Result: -</h3>
+            <hr>
+            <h2>Temperature</h2><input type="number" id="temp_spain" placeholder="Enter Degrees"><button
+                class="btn-spain" onclick="convertTemp('F')">F to C</button><button class="btn-spain"
+                onclick="convertTemp('C')">C to F</button>
+            <h3 id="tempResult_spain">Result: -</h3>
+            <p id="clock4" class="clock-display">EST Time: --:--</p><button class="clear-btn" onclick="clearAll()">Clear
+                All</button>
+        </div>
+        <div id="greece" class="tab-content"><span class="gear-icon" onclick="openSettings()">⚙️</span>
+            <h2>Greece (EUR)</h2><input type="number" id="amt_greece" placeholder="Enter Amount"><button
+                class="btn-greece" onclick="convert('greece', 'toLocal')">USD to EUR</button><button class="btn-greece"
+                onclick="convert('greece', 'toUSD')">EUR to USD</button>
+            <h3 id="res_greece">Result: -</h3>
+            <hr>
+            <h2>Temperature</h2><input type="number" id="temp_greece" placeholder="Enter Degrees"><button
+                class="btn-greece" onclick="convertTemp('F')">F to C</button><button class="btn-greece"
+                onclick="convertTemp('C')">C to F</button>
+            <h3 id="tempResult_greece">Result: -</h3>
+            <p id="clock2" class="clock-display">EST Time: --:--</p><button class="clear-btn" onclick="clearAll()">Clear
+                All</button>
+        </div>
     </div>
 
     <div id="settings-page">
         <button class="btn-close" onclick="closeSettings()">Close</button>
         <h2>Settings</h2>
-        <div class="rate-container"><h3>Default Tab</h3><select id="defaultTabSelect"><option value="london">London</option><option value="canada">Canada</option><option value="spain">Spain</option><option value="greece">Greece</option></select><button class="btn-setup" onclick="saveDefaultTab()">Save Default Tab</button></div>
-        <div class="rate-container"><h3>London Rate</h3><input type="number" id="rate_london" step="0.0001"><button class="btn-london" onclick="saveRate('london')">Save London</button></div>
-        <div class="rate-container"><h3>Canada Rate</h3><input type="number" id="rate_canada" step="0.0001"><button class="btn-canada" onclick="saveRate('canada')">Save Canada</button></div>
-        <div class="rate-container"><h3>Spain/Greece Rate</h3><input type="number" id="rate_euro" step="0.0001"><button class="btn-spain" onclick="saveEuroRate()">Save EUR</button></div>
+        <div class="rate-container">
+            <h3>Default Tab</h3><select id="defaultTabSelect">
+                <option value="london">London</option>
+                <option value="canada">Canada</option>
+                <option value="spain">Spain</option>
+                <option value="greece">Greece</option>
+            </select><button class="btn-setup" onclick="saveDefaultTab()">Save Default Tab</button>
+        </div>
+        <div class="rate-container">
+            <h3>London Rate</h3><input type="number" id="rate_london" step="0.0001"><button class="btn-london"
+                onclick="saveRate('london')">Save London</button>
+        </div>
+        <div class="rate-container">
+            <h3>Canada Rate</h3><input type="number" id="rate_canada" step="0.0001"><button class="btn-canada"
+                onclick="saveRate('canada')">Save Canada</button>
+        </div>
+        <div class="rate-container">
+            <h3>Spain/Greece Rate</h3><input type="number" id="rate_euro" step="0.0001"><button class="btn-spain"
+                onclick="saveEuroRate()">Save EUR</button>
+        </div>
     </div>
 
     <div class="tab-bar" id="tab-bar">
@@ -120,7 +345,7 @@
             else if (bodyClass.includes('greece')) { val = parseFloat(document.getElementById('temp_greece').value); res = document.getElementById('tempResult_greece'); }
             else { val = parseFloat(document.getElementById('temp').value); res = document.getElementById('tempResult'); }
             if (isNaN(val)) return;
-            res.innerText = (dir === 'F') ? ((val - 32) * 5/9).toFixed(1) + "°C" : (val * 9/5 + 32).toFixed(1) + "°F";
+            res.innerText = (dir === 'F') ? ((val - 32) * 5 / 9).toFixed(1) + "°C" : (val * 9 / 5 + 32).toFixed(1) + "°F";
         }
         function clearAll() { document.querySelectorAll('input[type="number"]:not([id^="rate_"])').forEach(i => i.value = ""); document.querySelectorAll('h3').forEach(h => h.innerText = "Result: -"); }
         function updateClock() {
@@ -132,4 +357,5 @@
         }
     </script>
 </body>
+
 </html>
