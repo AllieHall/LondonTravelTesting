@@ -356,6 +356,18 @@
                 if (el) el.innerText = "EST Time: " + timeString;
             });
         }
+        document.addEventListener('DOMContentLoaded', function () {
+            // Hide the settings page on startup
+            document.getElementById('settings-page').style.display = 'none';
+
+            // Show the default country page (or London if no default is set)
+            const defaultCountry = localStorage.getItem('defaultCountry') || 'london';
+            const defaultPage = document.getElementById(`${defaultCountry}-page`);
+            if (defaultPage) {
+                defaultPage.style.display = 'block';
+            }
+        });
+
     </script>
 </body>
 
