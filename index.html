@@ -94,6 +94,11 @@
             color: #000000;
         }
 
+        .btn-restore {
+            background-color: #000000;
+            color: #ffffff;
+        }
+
         .btn-close {
             background-color: #cbc6c6;
             color: #000000;
@@ -330,6 +335,9 @@
             <h3>USD to EUR Rate</h3><input type="number" id="rate_euro" step="0.0001"><button class="btn-spain"
                 onclick="saveEuroRate()">Save Spain/Greece</button>
         </div>
+        <div class="rate-container">
+            <button class="btn-restore" onclick="restoreDefaults()">Restore Default Rates</button>
+        </div>
     </div>
 
     <div class="tab-bar" id="tab-bar">
@@ -340,7 +348,7 @@
     </div>
 
     <script>
-        const APP_VERSION = '1.0.1';
+        const APP_VERSION = '1.0.2';
         function initApp() {
             if (!localStorage.getItem('rate_london')) localStorage.setItem('rate_london', 0.74);
             if (!localStorage.getItem('rate_canada')) localStorage.setItem('rate_canada', 1.38);
@@ -359,6 +367,7 @@
         function saveDefaultTab() { localStorage.setItem('preferredTab', document.getElementById('defaultTabSelect').value); alert('Default saved!'); }
         function saveRate(country) { localStorage.setItem('rate_' + country, document.getElementById('rate_' + country).value); alert('Rate saved!'); }
         function saveEuroRate() { localStorage.setItem('rate_euro', document.getElementById('rate_euro').value); alert('Euro rate saved!'); }
+        function restoreDefaults() { localStorage.setItem('rate_london', 0.74); localStorage.setItem('rate_canada', 1.38); localStorage.setItem('rate_euro', 0.85); document.getElementById('rate_london').value = 0.74; document.getElementById('rate_canada').value = 1.38; document.getElementById('rate_euro').value = 0.85; alert('Rates restored to defaults!'); }
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
