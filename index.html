@@ -102,11 +102,8 @@
         .btn-close {
             background-color: #cbc6c6;
             color: #000000;
-            width: 50% !important;
-            margin: 20px auto;
         }
 
-        /* Settings Overlay: Pure White Background */
         #settings-page {
             display: flex;
             flex-direction: column;
@@ -126,39 +123,8 @@
             justify-content: center;
             text-align: center; /* Ensures text is centered */
             /* Centers content horizontally */
-        }
-
-        #settings-page > * {
-            margin: 10px 0; /* Adds spacing between child elements */
-            max-width: 300px; /* Limits the width of child elements for better readability */
             box-sizing: border-box; /* Ensures padding and borders are included in the element's total width */
-            align-self: center;
-            width: auto;
-            text-align: center;
-        }
 
-        .rate-container {
-            width: 100%;
-            max-width: 320px;
-            margin: 0 auto 25px;
-            border-bottom: 1px solid #aaa;
-            padding-bottom: 10px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .rate-container > * {
-            width: auto;
-            max-width: 280px;
-            display: block;
-            margin: 8px 0;
-            text-align: center;
-        }
-
-        .rate-container h3 {
-            width: auto;
         }
 
         /* Body Themes */
@@ -251,6 +217,12 @@
             color: #555;
             margin: 0 0 15px;
         }
+
+        #settings-page h3 {
+            border-top: 1px solid #aaa;
+            padding-bottom: 10px;
+            padding-top: 20px;
+        }
     </style>
 </head>
 
@@ -315,29 +287,19 @@
         <button class="btn-close" onclick="closeSettings()">Close</button>
         <h2>Settings</h2>
         <p id="app-version">Version: </p>
-        <div class="rate-container">
             <h3>Default Tab</h3><select id="defaultTabSelect">
                 <option value="london">London</option>
                 <option value="canada">Canada</option>
                 <option value="spain">Spain</option>
                 <option value="greece">Greece</option>
             </select><button class="btn-setup" onclick="saveDefaultTab()">Save Default Tab</button>
-        </div>
-        <div class="rate-container">
             <h3>USD to GBP Rate</h3><input type="number" id="rate_london" step="0.0001"><button class="btn-london"
                 onclick="saveRate('london')">Save London</button>
-        </div>
-        <div class="rate-container">
             <h3>USD to CAD Rate</h3><input type="number" id="rate_canada" step="0.0001"><button class="btn-canada"
                 onclick="saveRate('canada')">Save Canada</button>
-        </div>
-        <div class="rate-container">
             <h3>USD to EUR Rate</h3><input type="number" id="rate_euro" step="0.0001"><button class="btn-spain"
                 onclick="saveEuroRate()">Save Spain/Greece</button>
-        </div>
-        <div class="rate-container">
             <button class="btn-restore" onclick="restoreDefaults()">Restore Default Rates</button>
-        </div>
     </div>
 
     <div class="tab-bar" id="tab-bar">
@@ -348,7 +310,7 @@
     </div>
 
     <script>
-        const APP_VERSION = '1.0.2';
+        const APP_VERSION = '1.0.3';
         function initApp() {
             if (!localStorage.getItem('rate_london')) localStorage.setItem('rate_london', 0.74);
             if (!localStorage.getItem('rate_canada')) localStorage.setItem('rate_canada', 1.38);
