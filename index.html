@@ -103,7 +103,8 @@
 
         /* Settings Overlay: Pure White Background */
         #settings-page {
-            display: none;
+            display: flex;
+            flex-direction: column;
             padding: 20px;
             background: #FFFFFF;
             position: fixed;
@@ -118,7 +119,12 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            text-align: center; /* Ensures text is centered */
             /* Centers content horizontally */
+        }
+
+        #settings-page > * {
+            margin: 10px 0; /* Adds spacing between child elemnts */
         }
 
         .rate-container {
