@@ -125,6 +125,9 @@
 
         #settings-page > * {
             margin: 10px 0; /* Adds spacing between child elemnts */
+            width: 100%; /* Ensures child elements take full width of the container */
+            max-width: 300px; /* Limits the width of child elements for better readability */
+            box-sizing: border-box; /* Ensures padding and borders are included in the element's total width */
         }
 
         .rate-container {
